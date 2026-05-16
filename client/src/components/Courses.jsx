@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 // Images import
@@ -16,6 +16,14 @@ import mongoLogo from '../assets/mongoLogo.png';
 const Courses = () => {
 
   const [search, setSearch] = useState("");
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const loggedInUser = localStorage.getItem("user");
+    if (loggedInUser) {
+      setUser(JSON.parse(loggedInUser));
+    }
+  }, []);
 
   const courses = [
     {
@@ -86,6 +94,11 @@ const Courses = () => {
 
   return (
     <div>
+      {user && (
+        <h2 style={{ color: 'white', textAlign: 'center', marginTop: '20px' }}>
+          Welcome back, {user.username || user.name || "User"}!
+        </h2>
+      )}
 
       <h2>Available Courses</h2>
 
