@@ -144,7 +144,7 @@ const clearSearch = () => {
           role="search"
           aria-label="Search courses"
         >
-          <FaSearch className="search-icon-left" aria-hidden="true" />
+          {/*<FaSearch className="search-icon-left" aria-hidden="true" />*/}
           <input
             ref={inputRef}
             type="text"
