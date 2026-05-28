@@ -23,11 +23,10 @@ const Courses = () => {
   const [search, setSearch] = useState('');
   const [user, setUser] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [wishlist, setWishlist] = useState([]);
+const [wishlist, setWishlist] = useState([]);
   const [animatingId, setAnimatingId] = useState(null);
   const [showWishlistOnly, setShowWishlistOnly] = useState(false);
   const navigate = useNavigate();
-
   useEffect(() => {
     const loggedInUser = localStorage.getItem('user');
     if (loggedInUser) {
