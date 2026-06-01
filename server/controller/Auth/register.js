@@ -24,7 +24,16 @@ const register = async (req, res, next) => {
       });
     }
 
-    const userExist = await UserModel.findOne({ email });
+    const duplicateQuery = {
+      $or: [
+        { email: { $regex: `^${escapeRegex(email)}$`, $options: "i" } },
+        { Email: { $regex: `^${escapeRegex(email)}$`, $options: "i" } },
+      ],
+    };
+
+    const userExist = await UserModel.findOne(duplicateQuery);
+    console.log("🔍 Duplicate email lookup:", duplicateQuery, "found:", !!userExist);
+
     if (userExist) {
       console.warn(`⚠️ Duplicate registration attempt: ${email}`);
       return res.status(409).json({
