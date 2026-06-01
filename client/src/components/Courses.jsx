@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import RoadmapGenerator from "./RoadmapGenerator";
 import ProjectGenerator from "./ProjectGenerator";
-
 import ProjectSuggestions from "./ProjectSuggestions";
-
 import FAQ from "./FAQ";
 import Testimonials from "./testimonials";
 import EmptyState from "./EmptyState";
 import { FaBookOpen, FaHeart, FaSearch } from "react-icons/fa";
+import { useDebounce } from '../hooks/useDebounce'; // added
 
 // Images
 import htmlLogo from '../assets/htmlLogo.png';
@@ -26,6 +25,7 @@ import API_BASE_URL from '../config/api';
 
 const Courses = () => {
   const [search, setSearch] = useState('');
+  const debouncedSearch = useDebounce(search, 350); // added
   const [user, setUser] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [wishlist, setWishlist] = useState([]);
@@ -55,6 +55,20 @@ const Courses = () => {
     const savedWishlist = localStorage.getItem('codevibe_wishlist');
     if (savedWishlist) setWishlist(JSON.parse(savedWishlist));
   }, []);
+  const location = useLocation();
+  useEffect(() => {
+    if (location.state?.scrollToFaq) {
+      const element = document.querySelector('.faq-section');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        // Fallback to checking by component tag if wrapper class varies
+        document.getElementById('faq')?.scrollIntoView({ behavior: 'smooth' });
+      }
+      // Clear navigation history state so it doesn't trigger on a normal page reload
+      window.history.replaceState({}, document.title);
+    }
+  }, [location]);
 
   const toggleWishlist = (e, courseTitle) => {
     e.preventDefault();
@@ -87,7 +101,7 @@ const Courses = () => {
   const categories = ['All', ...new Set(courses.map(course => course.category))];
 
   const filteredCourses = courses.filter((course) => {
-    const matchesSearch = course.title.toLowerCase().includes(search.trim().toLowerCase());
+    const matchesSearch = course.title.toLowerCase().includes(debouncedSearch.trim().toLowerCase()); // ✅ changed search → debouncedSearch
     const matchesCategory = selectedCategory === 'All' || course.category === selectedCategory;
     const matchesWishlist = !showWishlistOnly || wishlist.includes(course.title);
     return matchesSearch && matchesCategory && matchesWishlist;
@@ -244,7 +258,7 @@ const Courses = () => {
             type="text"
             className="search-input"
             placeholder="Search for courses (HTML, React, DSA...)"
-            value={search} 
+            value={search}
             onChange={(e) => setSearch(e.target.value)}
             style={{
               width: "100%",
@@ -395,10 +409,10 @@ const Courses = () => {
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '6px', marginBottom: '12px' }}>
-                <div style={{ display: 'flex',  gap: '12px', justifyContent: 'center', marginTop: '8px', color: '#cbd5e1', fontSize: '14px'}}>
-                <span>📚 {course.duration}</span>
-                <span>⏱️ {course.time}</span>
-                  </div>
+                <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginTop: '8px', color: '#cbd5e1', fontSize: '14px' }}>
+                  <span>📚 {course.duration}</span>
+                  <span>⏱️ {course.time}</span>
+                </div>
               </div>
 
               <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem', lineHeight: '1.5', textAlign: 'center', margin: '0 0 20px 0', flex: 1 }}>
@@ -446,11 +460,8 @@ const Courses = () => {
         />
       )}
       <RoadmapGenerator />
-
       <ProjectGenerator />
-
       <ProjectSuggestions />
-
       <Testimonials />
       <FAQ />
     </div>

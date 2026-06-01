@@ -281,13 +281,18 @@ const getAnalytics = async (req, res) => {
     console.log(`[getAnalytics] Querying user with email: "${email}"`);
     const [user, progress, events] = await Promise.all([
       User.findOne({
-      $or: [
-      { email },
-      { Email: email }
-      ],      
-      }).lean(),
-      Progress.findOne({ email }).lean(),
-      Analytics.find({ email }).sort({ createdAt: 1 }).lean(),
+        $or: [
+          { email },
+          { Email: email }
+        ],
+      })
+        .select('username Email college year bio avatarUrl joinedAt')
+        .lean(),
+      Progress.findOne({ email }).select('scores completedLessons').lean(),
+      Analytics.find({ email })
+        .select('lessonId score points coins learningTime createdAt type')
+        .sort({ createdAt: 1 })
+        .lean(),
     ]);
 
     if (!user) {
@@ -308,7 +313,9 @@ const getAnalytics = async (req, res) => {
     );
 
     const lessons = progressLessonIds.length
-      ? await Lesson.find({ lessonId: { $in: progressLessonIds } }).lean()
+      ? await Lesson.find({ lessonId: { $in: progressLessonIds } })
+          .select('lessonId order createdAt')
+          .lean()
       : [];
 
     const scoreValues = Object.values(scores).filter((value) => typeof value === 'number');

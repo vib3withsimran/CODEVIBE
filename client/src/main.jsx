@@ -230,10 +230,10 @@ createRoot(document.getElementById('root')).render(
       <AuthProvider>
         <SearchProvider>
           <Head />
-        <DynamicProgressSidebar />
-        <ScrollNavigator />
-        <GlobalBackNav />
-        <ErrorBoundary>
+          <DynamicProgressSidebar />
+          <ScrollNavigator />
+          <GlobalBackNav />
+          <ErrorBoundary>
         <Routes>
           {/* General Routes */}
           <Route path="/" element={<Navigate to="/lessons" replace />} />

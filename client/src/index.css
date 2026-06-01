@@ -62,10 +62,12 @@ header {
     inset 0 0 20px rgba(255, 77, 109, 0.1);
   position: relative;
   overflow-x: hidden;
+  z-index: 99998;
 }
 
 /* Header glow animation */
-header::before, .site-header::before {
+header::before,
+.site-header::before {
   content: '';
   position: absolute;
   top: -50%;
@@ -78,7 +80,9 @@ header::before, .site-header::before {
 }
 
 @media (max-width: 768px) {
-  header::before, .site-header::before {
+
+  header::before,
+  .site-header::before {
     width: 100%;
     height: 100%;
     top: 0;
@@ -1330,8 +1334,8 @@ textarea::placeholder {
 /* Dashboard */
 .dashboard {
   min-height: 100vh;
-  padding: 1.5rem 2rem; 
-  display: block;        
+  padding: 1.5rem 2rem;
+  display: block;
   color: var(--text-primary);
 }
 
@@ -2230,6 +2234,7 @@ select:focus {
   flex-direction: column;
   gap: 0.75rem;
   width: 100%;
+  z-index: 99998;
 }
 
 /* Animated glow layer */
@@ -2326,7 +2331,8 @@ select:focus {
 
 /* Bars */
 .ham-bar {
-  position: absolute;   /* important */
+  position: absolute;
+  /* important */
   width: 22px;
   height: 2px;
   background: #ff4d6d;
@@ -2371,11 +2377,9 @@ select:focus {
   width: 100%;
   height: 100vh;
 
-  background: linear-gradient(
-    160deg,
-    rgba(10, 14, 39, 0.98) 0%,
-    rgba(26, 31, 58, 0.99) 100%
-  );
+  background: linear-gradient(160deg,
+      rgba(10, 14, 39, 0.98) 0%,
+      rgba(26, 31, 58, 0.99) 100%);
 
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -2394,7 +2398,7 @@ select:focus {
 
   transform: translateY(-100%);
   transition: all 0.35s ease;
-  
+
   padding-top: 90px;
   overflow-y: auto;
   overflow-x: hidden;
@@ -2704,6 +2708,7 @@ select:focus {
     font-size: 0.95rem;
   }
 }
+
 .scroll-navigator {
   position: fixed;
   bottom: 24px;
@@ -2720,6 +2725,7 @@ select:focus {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -2905,6 +2911,7 @@ select:focus {
   text-align: center;
   background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0a0e27 100%);
 }
+
 .testimonials h2 {
   font-size: 2rem;
   margin-bottom: 10px;
@@ -2947,7 +2954,7 @@ select:focus {
 .testimonial-card h4 {
   color: #ff85a1;
   font-weight: 600;
-  
+
 }
 
 /* ===== VIEW REPORT PAGE ===== */
@@ -2966,11 +2973,11 @@ select:focus {
   width: 100%;
   max-width: 950px;
   margin-top: 3rem;
-  background:linear-gradient(135deg,#1a1f3a 0%,#242a45 100%);
+  background: linear-gradient(135deg, #1a1f3a 0%, #242a45 100%);
   border: 2px solid #ff4d6d;
   border-radius: 24px;
   padding: 2.5rem;
-  box-shadow:0 0 30px rgba(255, 77, 109, 0.22);
+  box-shadow: 0 0 30px rgba(255, 77, 109, 0.22);
   display: flex;
   flex-direction: column;
   gap: 2rem;
@@ -2991,13 +2998,13 @@ select:focus {
 
 .vr-stats {
   display: grid;
-  grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1rem;
 }
 
 .vr-stat-box {
   background: #111633;
-  border:1px solid rgba(255, 77, 109, 0.35);
+  border: 1px solid rgba(255, 77, 109, 0.35);
   border-radius: 18px;
   padding: 1.5rem;
   display: flex;
@@ -3009,7 +3016,7 @@ select:focus {
 
 .vr-stat-box:hover {
   transform: translateY(-5px);
-  box-shadow:0 0 18px rgba(255, 77, 109, 0.3);
+  box-shadow: 0 0 18px rgba(255, 77, 109, 0.3);
 }
 
 .vr-label {
@@ -3039,7 +3046,7 @@ select:focus {
 
 .vr-lesson-card {
   background: #111633;
-  border:1px solid rgba(255, 77, 109, 0.25);
+  border: 1px solid rgba(255, 77, 109, 0.25);
   border-radius: 14px;
   padding: 1rem 1.3rem;
   display: flex;
@@ -3051,7 +3058,7 @@ select:focus {
 
 .vr-lesson-card:hover {
   transform: translateY(-3px);
-  box-shadow:0 0 15px rgba(255, 77, 109, 0.22);
+  box-shadow: 0 0 15px rgba(255, 77, 109, 0.22);
 }
 
 .vr-score {
