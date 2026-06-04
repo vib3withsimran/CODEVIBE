@@ -6,6 +6,7 @@ import { useDebounce } from "../hooks/useDebounce"; // added
 import { FaSignInAlt, FaSignOutAlt, FaUserPlus, FaTachometerAlt, FaGamepad, FaSearch, FaTimes, FaHome, FaQuestionCircle, FaBook, FaEnvelope, FaTrophy } from "react-icons/fa";
 import logo from "../assets/favicon.png";
 import StreakCounter from "./StreakCounter.jsx";
+import { FaChevronDown, FaTasks, FaLightbulb } from "react-icons/fa";
 
 const COURSES = [
   { label: "HTML Basics", path: "/HtmlLesson" },
@@ -44,6 +45,20 @@ const Head = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const [showProjects, setShowProjects] = useState(false);
+
+useEffect(() => {
+  const closeDropdown = () => {
+    setShowProjects(false);
+  };
+
+  document.addEventListener("click", closeDropdown);
+
+  return () => {
+    document.removeEventListener("click", closeDropdown);
+  };
+}, []);
 
   //  Filtering now runs only when debouncedQuery changes, not on every keystroke
   useEffect(() => {
@@ -114,105 +129,93 @@ const Head = () => {
           </div>
 
           {/* Desktop Nav */}
-          <div className="header-navlink">
-            {/* 1. Public Link: Available to everyone */}
-            <NavLink
-              to="/lessons"
-              className={({ isActive }) =>
-                isActive ? "nav-link active" : "nav-link"
-              }
-              onClick={() => {
-                window.scrollTo({
-                  top: 0,
-                  behavior: "smooth",
-                });
-              }}
-            >
-              <FaHome className="nav-icon" />
+         <button
+  type="button"
+  className="nav-link"
+  onClick={() => navigate("/lessons", { state: { scrollToTop: true } })}
+>
+  <span>Home</span>
+</button>
 
-              Home
-            </NavLink>
-            <NavLink
-              to="/lessons"
-              state={{ scrollToFaq: true }}
-              className={({ isActive }) =>
-                isActive ? "nav-link active" : "nav-link"
-              }
-            >
-              <FaQuestionCircle className="nav-icon" />
-              FAQ
-            </NavLink>
-            <NavLink
-              to="/lessons"
-              className={({ isActive }) =>
-                isActive ? "nav-link active" : "nav-link"
-              }
-              onClick={() => {
-                setTimeout(() => {
-                  document
-                    .getElementById("courses")
-                    ?.scrollIntoView({
-                      behavior: "smooth",
-                      block: "start",
-                    });
-                }, 100);
-              }}
-            >
-              <FaBook className="nav-icon" />
-              Courses
-            </NavLink>
-            <NavLink
-              to="/lessons"
-              className={({ isActive }) =>
-                isActive ? "nav-link active" : "nav-link"
-              }
-              onClick={() => {
-                setTimeout(() => {
-                  document
-                    .getElementById("contact-footer")
-                    ?.scrollIntoView({
-                      behavior: "smooth",
-                      block: "start",
-                    });
-                }, 100);
-              }}
-            >
-              <FaEnvelope className="nav-icon" />
-              Contact Us
-            </NavLink>
-          </div>
+<button
+  type="button"
+  className="nav-link"
+  onClick={() => navigate("/lessons", { state: { scrollToCourses: true } })}
+>
+  <span>Courses</span>
+</button>
 
-          <button
-            type="button"
-            className="nav-link"
-            onClick={() => navigate("/lessons", { state: { scrollToRoadmap: true } })}
-          >
-            <span>Roadmap Generator</span>
-          </button>
+<button
+  type="button"
+  className="nav-link"
+  onClick={() => navigate("/lessons", { state: { scrollToRoadmap: true } })}
+>
+  <span>Roadmap Generator</span>
+</button>
 
-          <button
-            type="button"
-            className="nav-link"
-            onClick={() => navigate("/lessons", { state: { scrollToProjectGenerator: true } })}
-          >
-            <span>Project Milestone</span>
-          </button>
 
-          <button
-            type="button"
-            className="nav-link"
-            onClick={() => navigate("/lessons", { state: { scrollToProjectSuggestions: true } })}
-          >
-            <span>Project Suggestions</span>
-          </button>
+<div
+  className="dropdown"
+  onClick={(e) => e.stopPropagation()}
+>
+  <button
+    type="button"
+    className="nav-link dropdown-btn"
+    onClick={() => setShowProjects(!showProjects)}
+  >
+    <span>Projects</span>
+    <FaChevronDown
+      className={`dropdown-arrow ${
+        showProjects ? "rotate-arrow" : ""
+      }`}
+    />
+  </button>
 
-          <button
-            type="button"
-            className="nav-link"
-            onClick={() => navigate("/lessons", { state: { scrollToCourses: true } })}
-          >
-            <span>Courses</span>
-          </button>
+  {showProjects && (
+    <div className="dropdown-content">
+      <button
+        className="dropdown-item"
+        onClick={() => {
+          navigate("/lessons", {
+            state: { scrollToProjectGenerator: true }
+          });
+          setShowProjects(false);
+        }}
+      >
+        <FaTasks />
+        <span>Project Milestone</span>
+      </button>
+
+      <button
+        className="dropdown-item"
+        onClick={() => {
+          navigate("/lessons", {
+            state: { scrollToProjectSuggestions: true }
+          });
+          setShowProjects(false);
+        }}
+      >
+        <FaLightbulb />
+        <span>Project Ideas</span>
+      </button>
+    </div>
+  )}
+</div>
+<button
+  type="button"
+  className="nav-link"
+  onClick={() => navigate("/lessons", { state: { scrollToFaq: true } })}
+>
+  <span>FAQ</span>
+</button>
+
+<button
+  type="button"
+  className="nav-link"
+  onClick={() => navigate("/lessons", { state: { scrollToContact: true } })}
+>
+  <span>Contact Us</span>
+</button>
 
           {/* 2. Conditional Links based on Auth State */}
           <div className="header-navlink">
@@ -220,52 +223,57 @@ const Head = () => {
             {user ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
               <StreakCounter />
-              <Link to="/leaderboard" className="nav-link">
-                <FaTrophy className="nav-icon" />
-                <span>Leaderboard</span>
-              </Link>
-              <Link to="/dashboard" className="nav-link">
-                <FaTachometerAlt className="nav-icon" />
-                <span>Dashboard</span>
-              </Link>
-              <Link to="/login" onClick={handleLogout} className="nav-link">
-                <FaSignOutAlt className="nav-icon" />
-                <span>Logout</span>
-              </Link>
+              <button
+              type="button"
+              className="nav-link"
+              onClick={() => navigate("/leaderboard")}
+             >
+             <FaTrophy className="nav-icon" />
+             <span>LeaderBoard</span>
+            </button>
+
+            <button
+            type="button"
+            className="nav-link"
+            onClick={() => navigate("/dashboard")}
+            >
+           <FaTachometerAlt className="nav-icon" />
+           <span>Dashboard</span>
+           </button>
+          <button
+           type="button"
+           className="nav-link"
+           onClick={() => {
+           handleLogout();
+           navigate("/login");
+           }}
+>
+          <FaSignOutAlt className="nav-icon" />
+          <span>Logout</span>
+          </button>
+              
             </div>
             ) : (
               <>
-                <NavLink to="/login" className="nav-link"
-                  onClick={() => {
-                setTimeout(() => {
-                  document
-                    .getElementById("login")
-                    ?.scrollIntoView({
-                      behavior: "smooth",
-                      block: "start",
-                    });
-                }, 100);
-              }}
-                >
-                  <FaSignInAlt className="nav-icon" />
-                  <span>Login</span>
 
-                </NavLink>
-                <NavLink to="/signup" className="nav-link"
-                  onClick={() => {
-                setTimeout(() => {
-                  document
-                    .getElementById("login")
-                    ?.scrollIntoView({
-                      behavior: "smooth",
-                      block: "start",
-                    });
-                }, 100);
-              }}
-                >
-                  <FaUserPlus className="nav-icon" />
-                  <span>Sign Up</span>
-                </NavLink>
+          <button
+            type="button"
+            className="nav-link"
+            onClick={() => navigate("/login")}
+          >
+          <FaSignInAlt className="nav-icon" />
+          <span>Login</span>
+          </button>
+
+          <button 
+            type="button"
+            className="nav-link"
+            onClick={() => navigate("/signup")}
+          >
+          <FaUserPlus className="nav-icon" />
+          <span>Sign Up</span>
+          </button>
+              
               </>
             )}
           </div>
