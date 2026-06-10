@@ -14,7 +14,7 @@ Last updated: 2026-06-10
 
 | Rank | Contributor | Score | Commits | Merged PRs | Closed Issues |
 | --- | --- | ---: | ---: | ---: | ---: |
-| 1 | [@Pcmhacker-piro](https://github.com/Pcmhacker-piro) | 440 | 0 | 13 | 62 |
+| 1 | [@Pcmhacker-piro](https://github.com/Pcmhacker-piro) | 451 | 3 | 13 | 63 |
 | 2 | [@thedaripanator](https://github.com/thedaripanator) | 155 | 15 | 9 | 7 |
 | 3 | [@Saubhagya1621](https://github.com/Saubhagya1621) | 133 | 9 | 7 | 9 |
 | 4 | [@sricharan-213](https://github.com/sricharan-213) | 131 | 8 | 7 | 9 |
@@ -40,8 +40,8 @@ Last updated: 2026-06-10
 | 24 | [@jagrati7305](https://github.com/jagrati7305) | 55 | 5 | 3 | 3 |
 | 25 | [@knoxiboy](https://github.com/knoxiboy) | 55 | 0 | 0 | 11 |
 | 26 | [@Hiral-Barot](https://github.com/Hiral-Barot) | 54 | 2 | 1 | 8 |
-| 27 | [@annrose2277-glitch](https://github.com/annrose2277-glitch) | 52 | 1 | 1 | 8 |
-| 28 | [@Vaibhav-221](https://github.com/Vaibhav-221) | 52 | 1 | 2 | 6 |
+| 27 | [@Vaibhav-221](https://github.com/Vaibhav-221) | 54 | 2 | 2 | 6 |
+| 28 | [@annrose2277-glitch](https://github.com/annrose2277-glitch) | 52 | 1 | 1 | 8 |
 | 29 | [@shyam-medh](https://github.com/shyam-medh) | 51 | 13 | 1 | 3 |
 | 30 | [@Smrithi-krishna](https://github.com/Smrithi-krishna) | 51 | 8 | 2 | 3 |
 | 31 | [@sonusharma6-dsa](https://github.com/sonusharma6-dsa) | 50 | 0 | 0 | 10 |
