@@ -226,6 +226,7 @@ import GlobalBackNav from "./components/common/GlobalBackNav.jsx";
 import ErrorBoundary from "./components/ErrorBoundary.jsx";
 import { SearchProvider } from "./context/SearchContext.jsx";
 import  Contact  from "./components/Contact.jsx";
+import LessonLayout from "./components/LessonLayout.jsx";
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -260,7 +261,7 @@ createRoot(document.getElementById('root')).render(
               <Route path="/contact" element={<Contact />} />
 
               {/* HTML Lessons */}
-              <Route element={<PrivateRoute />}>
+              <Route element={<LessonLayout />}>
                 <Route path="/HtmlLesson" element={<HtmlLesson />} />
                 <Route path="/HtmlLesson1" element={<HtmlLesson1 />} />
                 <Route path="/HtmlLesson2" element={<HtmlLesson2 />} />
