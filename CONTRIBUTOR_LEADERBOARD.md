@@ -27,7 +27,7 @@ Last updated: 2026-06-11
 | 11 | [@KGFCH2](https://github.com/KGFCH2) | 87 | 1 | 1 | 15 |
 | 12 | [@pranav-cholleti](https://github.com/pranav-cholleti) | 86 | 18 | 3 | 4 |
 | 13 | [@divyagsharma2006-blip](https://github.com/divyagsharma2006-blip) | 80 | 5 | 4 | 6 |
-| 14 | [@StarDustNova-57](https://github.com/StarDustNova-57) | 75 | 5 | 4 | 5 |
+| 14 | [@Swetha-Varma-K](https://github.com/Swetha-Varma-K) | 75 | 5 | 4 | 5 |
 | 15 | [@anshul23102](https://github.com/anshul23102) | 72 | 1 | 1 | 12 |
 | 16 | [@Vaibhav-221](https://github.com/Vaibhav-221) | 71 | 3 | 3 | 7 |
 | 17 | [@Owais-Siddique-11](https://github.com/Owais-Siddique-11) | 70 | 0 | 0 | 14 |
