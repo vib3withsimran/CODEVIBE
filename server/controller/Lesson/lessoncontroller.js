@@ -233,21 +233,20 @@ exports.completeLesson = async (req, res) => {
       const { getLearningStreak } = require('../analytics/analyticsController');
       const events = await Analytics.find({ email }).sort({ createdAt: 1 }).lean();
       const currentStreak = getLearningStreak(events);
-      
+
       let multiplier = 1.0;
       if (currentStreak >= 7) multiplier = 1.5;
       else if (currentStreak >= 3) multiplier = 1.2;
 
       earnedXp = Math.round(baseXp * multiplier);
 
-      if (!earnedBadges.includes('first_blood') && (!progress || progress.completedLessons.length === 0)) {
-        earnedBadges.push('first_blood');
-      }
-      
-      const hour = new Date().getHours();
-      if (!earnedBadges.includes('night_owl') && (hour >= 0 && hour < 5)) {
-        earnedBadges.push('night_owl');
-      }
+      const { checkAndAwardBadges } = require('../../config/badges');
+      const progressData = progress ? { ...progress.toObject(), badges: earnedBadges } : { completedLessons: [], scores: {}, badges: [], currentStreak: 0 };
+      const result = checkAndAwardBadges(
+        progressData,
+        { score, analyticsEvents: events }
+      );
+      earnedBadges = result.earnedBadgeIds;
     }
 
     const currentXp = progress?.xp || 0;

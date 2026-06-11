@@ -23,6 +23,7 @@ import BookmarksWidget from "./BookmarksWidget";
 import DailyQuests from "./DailyQuests.jsx";
 import "./Dashboard.css";
 import { Upload } from 'lucide-react';
+import { ALL_POSSIBLE_BADGES } from "../config/badges";
 
 const formatNumber = (value) => {
   if (value === undefined || value === null) return "—";
@@ -72,14 +73,6 @@ const getSubjectGradient = (subject) => {
   const key = subject?.toString().toLowerCase();
   return SUBJECT_GRADIENTS[key] || generateFallbackGradient(subject);
 };
-
-const ALL_POSSIBLE_BADGES = [
-  { id: "first_blood", label: "First Blood", desc: "Complete your very first lesson" },
-  { id: "night_owl", label: "Night Owl", desc: "Complete a lesson between 12 AM and 5 AM" },
-  { id: "fast_learner", label: "Fast Learner", desc: "Complete 5 lessons in a single day" },
-  { id: "weekend_warrior", label: "Weekend Warrior", desc: "Complete 5 lessons on a weekend" },
-  { id: "html_master", label: "HTML Master", desc: "Complete all HTML lessons" }
-];
 
 const buildHeatmapCells = (heatmapData = {}, streak = 0, events = [], weeks = 10) => {
   const dayMs = 24 * 60 * 60 * 1000;
@@ -1031,6 +1024,19 @@ const Dashboard = () => {
                     );
                   })}
                 </div>
+                <a
+                  href="#/badges"
+                  style={{
+                    display: "inline-block",
+                    marginTop: "0.5rem",
+                    fontSize: "0.75rem",
+                    color: "#ff5f8f",
+                    textDecoration: "none",
+                    fontWeight: 500,
+                  }}
+                >
+                  View all badges →
+                </a>
               </div>
 
               <div className="profile-details">
