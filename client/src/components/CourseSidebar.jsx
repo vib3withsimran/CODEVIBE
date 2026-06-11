@@ -118,7 +118,7 @@ const CourseSidebar = ({ coursePrefix, totalLessons, courseTitle }) => {
 
         .gami-expanded-card {
           position: fixed;
-          bottom: 100px;
+          top: 90px;
           left: 40px;
           z-index: 9999;
           background: linear-gradient(145deg, rgba(20,20,30,0.95), rgba(30,30,45,0.95));
@@ -130,6 +130,9 @@ const CourseSidebar = ({ coursePrefix, totalLessons, courseTitle }) => {
           backdrop-filter: blur(15px);
           animation: popScaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
           transform-origin: bottom left;
+            max-height: calc(100vh - 110px);
+            overflow-y: auto;
+            
         }
 
         .gami-close-btn {
@@ -259,17 +262,17 @@ const CourseSidebar = ({ coursePrefix, totalLessons, courseTitle }) => {
 
       {/* Floating Button Container */}
       <div className="gami-fab-container">
-        {!isOpen && popMessage && (
+        { popMessage && !isOpen &&  (
           <div className="gami-bubble" key={popMessage}>
             {popMessage}
           </div>
         )}
-
-        {!isOpen && (
-          <button className="gami-fab" onClick={() => setIsOpen(!isOpen)} aria-label="Course Progress">
-            <FaTrophy size={26} />
-          </button>
-        )}
+     {!isOpen && (
+    <button
+     className="gami-fab"
+     onClick={() => setIsOpen(!isOpen)}
+        ></button>   
+     ) }
       </div>
     </>
   );
