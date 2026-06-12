@@ -3,9 +3,10 @@ import { NavLink, Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../AuthProvider.jsx";
 import { useSearch } from "../context/SearchContext.jsx";
 import { useDebounce } from "../hooks/useDebounce"; // added
-import { FaSignInAlt, FaSignOutAlt, FaUserPlus, FaTachometerAlt, FaGamepad, FaSearch, FaTimes, FaHome, FaQuestionCircle, FaBook, FaEnvelope, FaTrophy } from "react-icons/fa";
+import { FaSignInAlt, FaSignOutAlt, FaUserPlus, FaTachometerAlt, FaGamepad, FaSearch, FaTimes, FaHome, FaQuestionCircle, FaBook, FaEnvelope, FaTrophy, FaMedal } from "react-icons/fa";
 import logo from "../assets/favicon.png";
 import StreakCounter from "./StreakCounter.jsx";
+import NotificationBell from "./common/NotificationBell.jsx";
 import { FaChevronDown, FaTasks, FaLightbulb } from "react-icons/fa";
 
 const COURSES = [
@@ -238,6 +239,7 @@ useEffect(() => {
 
             {user ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px' , color: 'white'}}>
+              <NotificationBell />
               <StreakCounter />
               <button
               type="button"
@@ -246,6 +248,15 @@ useEffect(() => {
              >
              <FaTrophy className="nav-icon" />
              <span>LeaderBoard</span>
+            </button>
+
+            <button
+            type="button"
+            className="nav-link"
+            onClick={() => navigate("/badges")}
+            >
+            <FaMedal className="nav-icon" />
+            <span>Badges</span>
             </button>
 
             <button
@@ -348,6 +359,48 @@ useEffect(() => {
 >
   Courses
 </button>
+        {user ? (
+          <>
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '12px 0', borderBottom: '1px solid rgba(255,255,255,0.1)', marginBottom: '8px' }}>
+              <StreakCounter />
+            </div>
+            <Link to="/leaderboard" className="nav-link" onClick={() => setMenuOpen(false)}>
+              <FaTrophy className="nav-icon" /><span>Leaderboard</span>
+            </Link>
+            <Link to="/badges" className="nav-link" onClick={() => setMenuOpen(false)}>
+              <FaMedal className="nav-icon" /><span>Badges</span>
+            </Link>
+            <Link to="/dashboard" className="nav-link" onClick={() => setMenuOpen(false)}>
+              <FaTachometerAlt className="nav-icon" /><span>Dashboard</span>
+            </Link>
+            <Link to="/login" onClick={handleLogout} className="nav-link">
+              <FaSignOutAlt className="nav-icon" />
+              <span>Logout</span>
+            </Link>
+          </>
+        ) : (
+          <>
+            <Link
+              to="/login"
+              onClick={() => {
+                handleLogout();
+                setMenuOpen(false);
+              }}
+              className="nav-link"
+            >
+              <FaSignOutAlt className="nav-icon" />
+              <span>Logout</span>
+            </Link>
+            <Link
+              to="/signup"
+              className="nav-link"
+              onClick={() => setMenuOpen(false)}
+            >
+              <FaUserPlus className="nav-icon" />
+              <span>Sign Up</span>
+            </Link>
+          </>
+        )}
 
 <button
   type="button"
@@ -414,52 +467,7 @@ useEffect(() => {
 >
   Glossary
 </Link>
-{user ? (
-  <>
-    <Link
-      to="/leaderboard"
-      className="nav-link"
-      onClick={() => setMenuOpen(false)}
-    >
-      Leaderboard
-    </Link>
-
-    <Link
-      to="/dashboard"
-      className="nav-link"
-      onClick={() => setMenuOpen(false)}
-    >
-      Dashboard
-    </Link>
-
-    <Link
-      to="/login"
-      className="nav-link"
-      onClick={handleLogout}
-    >
-      Logout
-    </Link>
-  </>
-) : (
-  <>
-    <Link
-      to="/login"
-      className="nav-link"
-      onClick={() => setMenuOpen(false)}
-    >
-      Login
-    </Link>
-
-    <Link
-      to="/signup"
-      className="nav-link"
-      onClick={() => setMenuOpen(false)}
-    >
-      Sign Up
-    </Link>
-  </>
-)}
-      </nav>
+</nav>
 
       {isHomePage && (
         <div className="header-title-row">
@@ -506,7 +514,7 @@ useEffect(() => {
                 onClick={clearSearch}
                 aria-label="Clear search"
               >
-                <FaTimes />
+                <FaTimes size={15} />
               </button>
             )}
             <button type="submit" className="search-btn" aria-label="Search">
