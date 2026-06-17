@@ -49,30 +49,33 @@ const register = async (req, res, next) => {
     }
 
     // Check existing user
+    console.log("🔍 Checking existing user for email:", email);
     const userExist = await UserModel.findOne({
       email: email,
     });
-
-    console.log("🔍 Existing user:", userExist);
+    console.log("🔍 Existing user query result:", userExist ? `Found user with ID: ${userExist._id}` : "No user found");
 
     if (userExist) {
+      console.log("❌ Registration failed: User already exists");
       return res.status(409).json({
         success: false,
-        message: "User already exists",
+        message: "Account with this Email already exists",
       });
     }
 
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create user
-    const userCreate = await UserModel.create({
+    const newUserData = {
       username,
       email,
       password: hashedPassword,
       college,
       year,
-    });
+    };
+
+    // Create user
+    const userCreate = await UserModel.create(newUserData);
 
     console.log("✅ User created:", userCreate._id);
 
@@ -102,24 +105,22 @@ const register = async (req, res, next) => {
       },
     });
   } catch (error) {
-    console.error("❌ Registration Error");
-    console.error("Message:", error.message);
-    console.error("Code:", error.code);
-    console.error("Key Pattern:", error.keyPattern);
-    console.error("Key Value:", error.keyValue);
+    console.error("\n❌ [REGISTER] Registration Error Catch Block");
+    console.error("Full database error object:", error);
 
     if (error.code === 11000) {
-      const duplicateField = error.keyValue ? Object.keys(error.keyValue)[0] : "email";
+      console.error("MongoDB E11000 Duplicate Key Error detected:");
+      console.error("- error.code:", error.code);
+      console.error("- error.keyPattern:", error.keyPattern);
+      console.error("- error.keyValue:", error.keyValue);
+
+      const duplicateField = error.keyValue ? Object.keys(error.keyValue)[0] : "unknown_field";
       return res.status(409).json({
         success: false,
-        fix/user-already-exists-1150
         message: duplicateField === "email" 
           ? "User already exists" 
           : `Registration failed: A user with this ${duplicateField} already exists.`,
-          
-        message: "Duplicate entry detected",
-        field: Object.keys(error.keyPattern || {})[0],
-        main
+        field: duplicateField
       });
     }
 
