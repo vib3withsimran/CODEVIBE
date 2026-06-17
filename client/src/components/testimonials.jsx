@@ -11,7 +11,7 @@ const testimonials = [
     rating: 5,
   },
   {
-    name: "Sanjay Vanga",
+    name: "Sanjana Vanga",
     role: "Beginner Programmer",
     avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop",
     feedback:
