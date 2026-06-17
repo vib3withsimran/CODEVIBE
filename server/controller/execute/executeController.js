@@ -130,7 +130,8 @@ const runSpawn = (cmd, args, opts = {}) =>
 
     const timer = setTimeout(() => {
       timedOut = true;
-      try { child.kill("SIGKILL"); } catch (e) { /* ignore */ }
+      try { child.kill("SIGKILL"); } catch (e) {
+    console.error("Error:", e); /* ignore */ }
     }, EXEC_TIMEOUT_MS);
 
     child.stdout?.on("data", (d) => (stdout += d.toString()));
@@ -225,6 +226,7 @@ const runCodeInTempDir = async (language, code) => {
       await Promise.all(files.map((f) => fs.unlink(path.join(tmpDir, f)).catch(() => {})));
       await fs.rmdir(tmpDir).catch(() => {});
     } catch (e) {
+    console.error("Error:", e);
       // ignore cleanup errors
     }
   }
@@ -254,6 +256,7 @@ const executeCode = async (req, res) => {
     if (result.timedOut) throw { stderr: stderr || "Execution timed out", timedOut: true, executionTime };
     if (stderr && stderr.length && !output) throw { stderr, timedOut: false, executionTime };
   } catch (e) {
+    console.error("Error:", e);
     stderr = e?.stderr || String(e) || "Unknown execution error";
     const timedOut = e?.timedOut || false;
     executionTime = e?.executionTime || 0;

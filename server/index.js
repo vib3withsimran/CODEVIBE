@@ -42,7 +42,8 @@ const isLocalDevOrigin = (origin = "") => {
       hostname === "::1";
 
     return protocol.startsWith("http") && isLocalHost && Boolean(port);
-  } catch {
+  } catch (error) {
+    console.error("Error:", error);
     return false;
   }
 };

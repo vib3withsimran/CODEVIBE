@@ -38,7 +38,8 @@ const OAuthCallback = () => {
       const user = JSON.parse(decodeURIComponent(userRaw));
       login(user, token);
       navigate("/dashboard", { replace: true });
-    } catch {
+    } catch (error) {
+    console.error("Error:", error);
       setError("Failed to parse authentication data. Redirecting to login...");
       setTimeout(() => navigate("/login"), 3000);
     }

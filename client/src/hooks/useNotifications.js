@@ -43,7 +43,8 @@ export const useNotifications = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUnreadCount(response.data?.count || 0);
-    } catch {
+    } catch (error) {
+    console.error("Error:", error);
       // silently fail for count
     }
   }, [user?.email, token]);
