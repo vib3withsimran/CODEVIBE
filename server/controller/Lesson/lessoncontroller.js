@@ -2,6 +2,7 @@ const Lesson = require('../../models/lesson');
 const Progress = require('../../models/progress');
 const User = require('../../models/user.models');
 const Analytics = require('../../models/analytics');
+const Notification = require('../../models/notification');
 
 const LESSON_ID_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/i;
 const MAX_LESSON_ID_LENGTH = 80;
@@ -233,21 +234,20 @@ exports.completeLesson = async (req, res) => {
       const { getLearningStreak } = require('../analytics/analyticsController');
       const events = await Analytics.find({ email }).sort({ createdAt: 1 }).lean();
       const currentStreak = getLearningStreak(events);
-      
+
       let multiplier = 1.0;
       if (currentStreak >= 7) multiplier = 1.5;
       else if (currentStreak >= 3) multiplier = 1.2;
 
       earnedXp = Math.round(baseXp * multiplier);
 
-      if (!earnedBadges.includes('first_blood') && (!progress || progress.completedLessons.length === 0)) {
-        earnedBadges.push('first_blood');
-      }
-      
-      const hour = new Date().getHours();
-      if (!earnedBadges.includes('night_owl') && (hour >= 0 && hour < 5)) {
-        earnedBadges.push('night_owl');
-      }
+      const { checkAndAwardBadges } = require('../../config/badges');
+      const progressData = progress ? { ...progress.toObject(), badges: earnedBadges } : { completedLessons: [], scores: {}, badges: [], currentStreak: 0 };
+      const result = checkAndAwardBadges(
+        progressData,
+        { score, analyticsEvents: events }
+      );
+      earnedBadges = result.earnedBadgeIds;
     }
 
     const currentXp = progress?.xp || 0;
@@ -292,6 +292,30 @@ exports.completeLesson = async (req, res) => {
       });
     } catch (analyticsErr) {
       console.error('Analytics event creation failed:', analyticsErr);
+    }
+
+    try {
+      await Notification.create({
+        email,
+        type: 'lesson_complete',
+        message: `You completed the lesson "${lessonId}" with a score of ${score}!`,
+        relatedEntity: lessonId,
+      });
+    } catch (notifErr) {
+      console.error('Notification creation failed:', notifErr);
+    }
+
+    if (currentStreak > 1 && currentStreak % 5 === 0) {
+      try {
+        await Notification.create({
+          email,
+          type: 'streak_milestone',
+          message: `You've reached a ${currentStreak}-day learning streak! Keep it up!`,
+          relatedEntity: '',
+        });
+      } catch (notifErr) {
+        console.error('Streak notification creation failed:', notifErr);
+      }
     }
 
     res.json({
