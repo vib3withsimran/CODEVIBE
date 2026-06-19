@@ -5,7 +5,7 @@
 
 [build.environment]
   NODE_VERSION = "20"
-  NPM_FLAGS = "--no-package-lock"
+  NETLIFY_BUILD_CACHE_INVALIDATE = "2026-06-19-v2"
 
 [[redirects]]
   from = "/*"
