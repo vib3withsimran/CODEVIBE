@@ -1,6 +1,5 @@
 [build]
-  base = "."
-  command = "rm -f client/pnpm-lock.yaml client/pnpm-workspace.yaml && npm install --no-package-lock && npm run build --workspace=client"
+  command = "npm run build --workspace=client"
   publish = "client/dist"
 
 [build.environment]
