@@ -1,10 +1,10 @@
 [build]
-  command = "npm install && npm run build --workspace=client"
+  base = "."
+  command = "rm -f client/pnpm-lock.yaml client/pnpm-workspace.yaml && npm install --no-package-lock && npm run build --workspace=client"
   publish = "client/dist"
 
 [build.environment]
   NODE_VERSION = "20"
-  NETLIFY_BUILD_CACHE_INVALIDATE = "2026-06-19-v3"
 
 [[redirects]]
   from = "/*"
