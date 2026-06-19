@@ -18,69 +18,86 @@ Closes #1277 — Real-Time WebSocket Notification Architecture with Redis Pub/Su
 Notifications were fetched via HTTP polling (`setInterval` every 30 seconds), causing unnecessary server load and delayed updates.
 
 **After:**
-Real-time bidirectional communication using WebSockets. 
+Real-time bidirectional communication using WebSockets.
 
 ```text
-Database Write (MongoDB) ──► Notification Controller ──► CompilerService / Socket
-                                                                │
-                                                                ▼
-                                                        Redis Pub/Sub (Adapter)
-                                                                │
-                                                                ▼
-                                                        User-Specific Rooms
-                                                                │
-                                                                ▼
-                                                        Client (Socket.io)
+Database Write (MongoDB) ──► Notification Controller ──► Socket Events
+                                                               │
+                                                               ▼
+                                                       Redis Pub/Sub (Adapter)
+                                                               │
+                                                               ▼
+                                                       User-Specific Rooms (user:{email})
+                                                               │
+                                                               ▼
+                                                       Client (socket.io-client)
+                                                               │
+                                                               ▼
+                                                       React Hook (useNotifications)
+                                                               │
+                                                               ▼
+                                                       UI: Instant Notification Updates
 ```
 
 ---
 
-### ✨ What's Changed (Phase 1 - Backend Infrastructure)
+### ✨ What's Changed
 
-#### New Backend Socket Infrastructure
+#### Backend: Socket Infrastructure
 | File | Description |
 |------|-------------|
-| `server/socket/constants.js` | Defined standardized event names (`notification:new`, `notification:read`, etc.), room prefixes, and socket configuration. |
-| `server/socket/socketAuth.js` | JWT authentication middleware for Socket.io. Extracts tokens from handshake auth, headers, or query params, and rejects unauthorized connections. |
-| `server/socket/redisAdapter.js` | Configured the `@socket.io/redis-adapter` for multi-instance communication. Includes graceful fallback to local mode if Redis is unavailable. |
+| `server/socket/constants.js` | Standardized event names (`notification:new`, `notification:read`, etc.), room prefixes, and socket config. |
+| `server/socket/socketAuth.js` | JWT authentication middleware for Socket.io. Extracts tokens from handshake auth, headers, or query params. |
+| `server/socket/redisAdapter.js` | Configured `@socket.io/redis-adapter` for multi-instance communication. Gracefully falls back to local mode if Redis is unavailable. |
 | `server/socket/notificationEvents.js` | Standardized payload builders and emitters for versioned notification events. |
-| `server/socket/socketServer.js` | Core Socket.io initialization, attaching auth middleware, managing user rooms (`user:{email}`), and handling offline recovery sync requests. |
+| `server/socket/socketServer.js` | Core Socket.io initialization, attaching auth middleware, managing user rooms, and handling offline recovery sync requests. |
 | `server/socket/index.js` | Module exports for the socket subsystem. |
 
-#### Backend Integration
+#### Backend: Integration
 | File | Change |
 |------|--------|
-| `server/index.js` | Integrated `initSocketServer` into the Express server startup flow, attaching it to the active HTTP server. |
-| `server/controller/notificationController.js` | Updated to emit socket events (`emitNewNotification`, `emitNotificationRead`, `emitBulkRead`) **after** successful MongoDB writes. Existing REST endpoints remain intact. |
-| `server/package.json` | Added `socket.io`, `ioredis`, and `@socket.io/redis-adapter` dependencies. |
+| `server/index.js` | Integrated `initSocketServer` into Express startup flow. |
+| `server/controller/notificationController.js` | Updated to emit socket events after successful MongoDB writes. REST endpoints remain intact. |
+| `server/package.json` | Added `socket.io`, `ioredis`, and `@socket.io/redis-adapter` dependencies. Resolved merge conflict. |
 
-#### Client-Side Foundation
+#### Client: Real-Time Hook (Phase 2 — Complete)
 | File | Description |
 |------|-------------|
-| `client/src/socket/socketEvents.js` | Shared event constants mirroring the server for the client. |
+| `client/src/hooks/useNotifications.js` | **Fully migrated from REST polling to WebSocket.** Establishes authenticated socket connection, handles `notification:new`, `notification:read`, `notification:bulkRead`, and `notification:sync` events. Includes offline recovery via `notification:syncRequest` on reconnect. |
+| `client/src/socket/socketEvents.js` | Shared event constants mirroring the server. |
 | `client/package.json` | Added `socket.io-client` dependency. |
+
+#### Build & Lint Fixes
+| File | Fix |
+|------|-----|
+| `client/src/components/Compiler.test.jsx` | Added missing Vitest globals (`describe`, `it`, `expect`). |
+| `client/src/components/JsLesson25.jsx` | Fixed JSX syntax error (unescaped curly braces in code example). |
+| `client/src/context/SearchContext.jsx` | Suppressed `react-refresh/only-export-components` lint error. |
+| `client/src/AuthProvider.jsx` | Suppressed `react-refresh/only-export-components` lint error. |
+| `client/scripts/` | Moved 8 stray Node.js scripts out of `src/components/` to fix `no-undef` lint errors. |
+| `netlify.toml` | Upgraded Node version to 20. Removed stale `pnpm-workspace.yaml` / `pnpm-lock.yaml` from client. |
 
 ---
 
 ### 🔒 Security & Authentication
 
-- **JWT Socket Authentication:** Connections are validated using the same JWT secret as the REST API.
-- **Room Isolation:** Users are strictly joined to rooms matching their authenticated email (`user:{email}`). It is impossible to listen to another user's room.
-- **Safe Payload Emission:** Events are only emitted after database confirmation.
+- **JWT Socket Authentication:** Connections validated using the same JWT secret as the REST API.
+- **Room Isolation:** Users are strictly joined to rooms matching their authenticated email (`user:{email}`).
+- **Safe Payload Emission:** Events are only emitted after successful database writes.
 
 ---
 
 ### 🌐 Scaling & Reliability
 
 - **Redis Pub/Sub:** Enables horizontal scaling across multiple backend instances.
-- **Graceful Fallback:** If the Redis server is unreachable, the system automatically falls back to local in-memory socket mode without crashing.
-- **HTTP Fallback:** Socket.io is configured to allow transparent fallback to long-polling if WebSockets are blocked by proxies/firewalls.
+- **Graceful Fallback:** If Redis is unreachable, falls back to local in-memory socket mode without crashing.
+- **HTTP Fallback:** Socket.io transparently falls back to long-polling if WebSockets are unavailable.
+- **Offline Recovery:** Client emits a `notification:syncRequest` on reconnect to retrieve missed notifications.
+- **Multi-tab Sync:** Socket events automatically propagate to all open browser tabs for the same user.
 
 ---
 
 ### ⚙️ Configuration (Environment Variables)
-
-To enable Redis, configure the following in your `.env` file:
 
 ```env
 REDIS_URL=redis://localhost:6379
@@ -94,18 +111,17 @@ SOCKET_PING_INTERVAL=25000
 
 ---
 
-### 🔧 Next Steps (Phase 2 - Client Implementation)
-
-*This PR implements the core backend infrastructure. The remaining client-side features (React hooks, multi-tab sync, offline recovery, and UI updates) will be built upon this foundation.*
-
----
-
-### ✅ Acceptance Criteria Checklist (Backend)
+### ✅ Acceptance Criteria Checklist
 
 - [x] Socket.io integrated into Express server.
 - [x] JWT socket authentication implemented.
 - [x] User-specific rooms (`user:{email}`) implemented.
-- [x] Redis Pub/Sub adapter functional with fallback.
-- [x] `notificationController` updated to emit events.
+- [x] Redis Pub/Sub adapter functional with graceful fallback.
+- [x] `notificationController` updated to emit events after DB write.
 - [x] Backward compatibility maintained (REST endpoints intact).
-- [x] Dependencies installed (`socket.io`, `ioredis`, `@socket.io/redis-adapter`).
+- [x] Client-side `useNotifications` hook migrated to WebSocket.
+- [x] HTTP long-polling fallback configured.
+- [x] Offline/reconnect notification recovery implemented.
+- [x] Multi-tab synchronization supported.
+- [x] All lint errors resolved (0 errors).
+- [x] Netlify deploy preview passing.
