@@ -1,7 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const UserModel = require("../../models/user.models");
-const { JWT_SECRET, JWT_EXPIRES_IN } = require("../../config/jwt");
+const { JWT_SECRET, JWT_EXPIRES_IN, REFRESH_TOKEN_SECRET, REFRESH_TOKEN_EXPIRES_IN } = require("../../config/jwt");
 
 const escapeRegex = (value = "") => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
@@ -55,10 +55,32 @@ const login = async (req, res, next) => {
       { expiresIn: JWT_EXPIRES_IN }
     );
 
+    const refreshToken = jwt.sign(
+      { userId: user._id, email: user.email || user.Email, username: user.username },
+      REFRESH_TOKEN_SECRET,
+      { expiresIn: REFRESH_TOKEN_EXPIRES_IN }
+    );
+
+    const isProd = process.env.NODE_ENV === "production";
+
+    res.cookie("accessToken", token, {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: "strict",
+      maxAge: 15 * 60 * 1000 // 15 mins
+    });
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: "strict",
+      path: "/api/auth/refresh",
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    });
+
     return res.status(200).json({
       success: true,
       message: "Login successful",
-      token,
       user: {
         username: user.username,
         email: user.email || user.Email,

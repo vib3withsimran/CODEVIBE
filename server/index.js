@@ -6,6 +6,7 @@ dotenv.config();
 const routes = require("./routes/index");
 const passport = require("passport");
 require("./config/passport");
+const cookieParser = require("cookie-parser");
 
 const backend = express();
 backend.set("trust proxy", 1);
@@ -23,6 +24,7 @@ process.on("unhandledRejection", (reason) => {
 backend.use(express.json());
 backend.use(express.urlencoded({ extended: true }));
 backend.use(passport.initialize());
+backend.use(cookieParser());
 
 // CORS Configuration - read allowed origins from environment or use defaults
 const allowedOrigins = (
