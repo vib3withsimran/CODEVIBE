@@ -57,6 +57,7 @@ export default function Certificate({ backgroundUrl = defaultBackgroundUrl }) {
       const progRes = await axios.get(`${API_BASE_URL}/api/progress/${email}`);
       setProgress(progRes.data);
     } catch (e) {
+    console.error("Error:", e);
       setError(e?.response?.data?.message || e.message || "Something went wrong");
     }
 

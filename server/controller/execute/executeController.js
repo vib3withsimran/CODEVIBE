@@ -88,6 +88,7 @@ const generateHint = (stderr = "", language = "") => {
   return "💡 Review your code carefully. Compare it with the example in the lesson above.";
 };
 
+
 // ─── Main controller ─────────────────────────────────────────────────────────
 
 const executeCode = async (req, res) => {
@@ -108,6 +109,7 @@ const executeCode = async (req, res) => {
     stderr = result.stderr || "";
     executionTime = result.executionTime || 0;
   } catch (e) {
+    console.error("Error:", e);
     if (e instanceof ExecutionError) {
       stderr = e.stderr || e.stdout || e.message;
       executionTime = e.executionTime || 0;
@@ -117,6 +119,7 @@ const executeCode = async (req, res) => {
       stderr = e.message || String(e) || "Unknown execution error";
       errorType = "ExecutionError";
     }
+>>>>>>> upstream/main
     errorLine = extractErrorLine(stderr);
     err = stderr;
     hint = generateHint(stderr, language);

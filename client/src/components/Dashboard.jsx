@@ -987,6 +987,7 @@ const Dashboard = () => {
         );
       }
     } catch (err) {
+    console.error("Error:", err);
       setError(err.response?.data?.message || "Unable to save avatar.");
     }
   };
@@ -1034,6 +1035,7 @@ const Dashboard = () => {
       }
       setEditMode(false);
     } catch (err) {
+    console.error("Error:", err);
       setError(err.response?.data?.message || "Unable to save profile.");
     } finally {
       setSaving(false);

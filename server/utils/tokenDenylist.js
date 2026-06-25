@@ -12,7 +12,8 @@ function addToDenylist(token) {
       denylist.set(token, expiryMs);
       setTimeout(() => denylist.delete(token), ttlMs);
     }
-  } catch {
+  } catch (error) {
+    console.error("Error:", error);
     // already invalid, no need to store
   }
 }

@@ -188,7 +188,8 @@ const Compiler = ({
     try {
       await navigator.clipboard.writeText(code);
       setStatus("📋 Code copied!");
-    } catch {
+    } catch (error) {
+    console.error("Error:", error);
       setStatus("Failed to copy code");
     }
   };
@@ -460,11 +461,13 @@ const Compiler = ({
                 const out = document.getElementById('out');
                 const logs = [];
                 const oldLog = console.log;
-                console.log = (...args) => { logs.push(args.join(" ")); try{oldLog(...args)}catch(e){}; out.textContent = logs.join("\\n"); };
+                console.log = (...args) => { logs.push(args.join(" ")); try{oldLog(...args)}catch (e) {
+    console.error("Error:", e);}; out.textContent = logs.join("\\n"); };
                 const killer = setTimeout(() => { throw new Error("Timeout"); }, 1500);
                 ${code}
                 clearTimeout(killer);
-              } catch(e) { document.body.textContent = "Error: " + (e?.message || e); }
+              } catch (e) {
+    console.error("Error:", e); document.body.textContent = "Error: " + (e?.message || e); }
             })();
           <${"/"}script>
         </body>
@@ -507,14 +510,16 @@ const Compiler = ({
               const out = document.getElementById('out');
               const logs = [];
               const oldLog = console.log;
-              console.log = (...args) => { logs.push(args.join(' ')); try{oldLog(...args)}catch(_){}; out.textContent = logs.join("\\n"); };
+              console.log = (...args) => { logs.push(args.join(' ')); try{oldLog(...args)}catch (_) {
+    console.error("Error:", _);}; out.textContent = logs.join("\\n"); };
               const killer = setTimeout(() => { throw new Error('Timeout'); }, 2000);
               ${code}
               const rootEl = document.getElementById('root');
               const root = ReactDOM.createRoot(rootEl);
               if (typeof App === 'function') root.render(React.createElement(App));
               clearTimeout(killer);
-            } catch(e) { document.body.textContent = 'Error: ' + (e?.message || e); }
+            } catch (e) {
+    console.error("Error:", e); document.body.textContent = 'Error: ' + (e?.message || e); }
           </script>
         </body>
       </html>
@@ -556,6 +561,7 @@ const Compiler = ({
         fail({ type: "OutputMismatch", message: "", exp: expStr, got: out, ms });
       }
     } catch (e) {
+    console.error("Error:", e);
       const data = e?.response?.data || {};
       fail({
         type:    data.errorType    || "ExecutionError",

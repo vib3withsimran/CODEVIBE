@@ -68,6 +68,7 @@ const DSALesson13 = () => {
         setIsCorrect(true);
       }
     } catch (err) {
+    console.error("Error:", err);
       setOutput(err.message);
     }
   };

@@ -11,7 +11,8 @@ function isTokenExpired(token) {
   try {
     const payload = JSON.parse(atob(token.split(".")[1]));
     return payload.exp * 1000 < Date.now();
-  } catch {
+  } catch (error) {
+    console.error("Error:", error);
     return true;
   }
 }
@@ -24,7 +25,8 @@ function loadAuthState() {
     if (token && user && !isTokenExpired(token)) {
       return { user, token };
     }
-  } catch {
+  } catch (error) {
+    console.error("Error:", error);
     // ignore parse errors
   }
   localStorage.removeItem("authToken");
@@ -60,7 +62,8 @@ export const AuthProvider = ({ children }) => {
           {},
           { headers: { Authorization: `Bearer ${token}` } }
         );
-      } catch {
+      } catch (error) {
+    console.error("Error:", error);
         // clear local state regardless
       }
     }
