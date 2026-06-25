@@ -14,7 +14,7 @@ Last updated: 2026-06-25
 
 | Rank | Contributor | Score | Commits | Merged PRs | Closed Issues |
 | --- | --- | ---: | ---: | ---: | ---: |
-| 1 | [@Pcmhacker-piro](https://github.com/Pcmhacker-piro) | 802 | 11 | 20 | 116 |
+| 1 | [@Pcmhacker-piro](https://github.com/Pcmhacker-piro) | 807 | 11 | 20 | 117 |
 | 2 | [@thedaripanator](https://github.com/thedaripanator) | 167 | 16 | 10 | 7 |
 | 3 | [@Saubhagya1621](https://github.com/Saubhagya1621) | 138 | 9 | 7 | 10 |
 | 4 | [@sricharan-213](https://github.com/sricharan-213) | 131 | 8 | 7 | 9 |
@@ -28,7 +28,7 @@ Last updated: 2026-06-25
 | 12 | [@Siddh2024](https://github.com/Siddh2024) | 99 | 2 | 3 | 13 |
 | 13 | [@namrarafique93-del](https://github.com/namrarafique93-del) | 97 | 11 | 5 | 5 |
 | 14 | [@pranav-cholleti](https://github.com/pranav-cholleti) | 86 | 18 | 3 | 4 |
-| 15 | [@PremSahith](https://github.com/PremSahith) | 85 | 5 | 3 | 9 |
+| 15 | [@PremSahith](https://github.com/PremSahith) | 81 | 3 | 3 | 9 |
 | 16 | [@divyaa404](https://github.com/divyaa404) | 80 | 5 | 4 | 6 |
 | 17 | [@Swetha-Varma-K](https://github.com/Swetha-Varma-K) | 75 | 5 | 4 | 5 |
 | 18 | [@anshul23102](https://github.com/anshul23102) | 72 | 1 | 1 | 12 |
