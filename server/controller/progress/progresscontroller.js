@@ -35,6 +35,32 @@ exports.getProgress = async (req, res) => {
   }
 };
 
+exports.updateDailyGoal = async (req, res) => {
+  try {
+    const { dailyGoal } = req.body;
+    const email = req.user.email;
+
+    if (!dailyGoal || dailyGoal < 1 || dailyGoal > 10) {
+      return res.status(400).json({ message: "Daily goal must be between 1 and 10" });
+    }
+
+    const progress = await Progress.findOneAndUpdate(
+      { email },
+      { dailyGoal },
+      { new: true }
+    );
+
+    if (!progress) {
+      return res.status(404).json({ message: "Progress not found" });
+    }
+
+    res.json({ success: true, dailyGoal: progress.dailyGoal });
+  } catch (err) {
+    console.error("UPDATE GOAL ERROR:", err);
+    res.status(500).json({ message: "Failed to update goal" });
+  }
+};
+
 exports.getLeaderboard = async (req, res) => {
   try {
     const page = Math.max(1, parseInt(req.query.page) || 1);
