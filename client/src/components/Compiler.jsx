@@ -8,7 +8,7 @@ import Dropdown from "./common/Dropdown";
 import HintModal from "./HintModal";
 import SolutionModal from "./SolutionModal";
 import { useHints } from "../hooks/useHints";
-import { Copy, Download, Share2 } from "lucide-react";
+import { Copy, Download, History, Share2 } from "lucide-react";
 
 const SCORING = (attempt) =>
   attempt === 1 ? 100 :
@@ -140,6 +140,11 @@ const Compiler = ({
   const [expected, setExpected]         = useState(undefined);
   const [got, setGot]                   = useState(undefined);
   const [status, setStatus]             = useState("");
+  const [historyOpen, setHistoryOpen]    = useState(false);
+  const [historyLogs, setHistoryLogs]    = useState([]);
+  const [historyTotal, setHistoryTotal]  = useState(0);
+  const [historyPage, setHistoryPage]    = useState(1);
+  const [historyLoading, setHistoryLoading] = useState(false);
   const { token }                        = useAuth();
 
   const iframeRef = useRef(null);
@@ -183,6 +188,30 @@ const Compiler = ({
       setStatus("✅ Solution loaded. You can still edit and run it!");
     }
   }, [solution]);
+
+  // ── execution history ──────────────────────────────────────────────────────
+  const fetchHistory = useCallback(async (pageNum = 1) => {
+    if (!token) return;
+    setHistoryLoading(true);
+    try {
+      const { data } = await axios.get(`${API_BASE_URL}/api/execute/history?page=${pageNum}&limit=10`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (data.success) {
+        setHistoryLogs(data.logs);
+        setHistoryTotal(data.total);
+        setHistoryPage(data.page);
+      }
+    } catch (err) {
+      console.error("Failed to fetch history:", err);
+    } finally {
+      setHistoryLoading(false);
+    }
+  }, [token]);
+
+  useEffect(() => {
+    fetchHistory(1);
+  }, [fetchHistory]);
 
   // ── copy / download ──────────────────────────────────────────────────────
   const copyCode = async () => {
@@ -717,6 +746,83 @@ const Compiler = ({
           </span>
         )}
       </div>
+
+      {/* ── Execution History ── */}
+      <button
+        onClick={() => {
+          setHistoryOpen(!historyOpen);
+          if (!historyOpen && historyLogs.length === 0) fetchHistory(1);
+        }}
+        className="compiler-btn compiler-btn--hint"
+        style={{ width: '100%', marginTop: '8px' }}
+      >
+        <History size={16} style={{ marginRight: '6px' }} />
+        Execution History ({historyTotal})
+      </button>
+
+      {historyOpen && (
+        <div className="execution-history-panel">
+          {historyLoading ? (
+            <div className="execution-history-loading">Loading...</div>
+          ) : historyLogs.length === 0 ? (
+            <div className="execution-history-empty">No execution history yet.</div>
+          ) : (
+            <>
+              {historyLogs.map((log) => (
+                <div
+                  key={log._id}
+                  className="execution-history-item"
+                  onClick={() => {
+                    setCode(log.code);
+                    const langMap = {
+                      node: 'node', c: 'c', cpp: 'cpp', python: 'python',
+                      java: 'java', dbms: 'dbms', mongo: 'mongo',
+                    };
+                    if (langMap[log.language]) setLanguage(langMap[log.language]);
+                    setHistoryOpen(false);
+                  }}
+                >
+                  <div className="execution-history-item-header">
+                    <span className={`execution-history-lang execution-history-lang--${log.language}`}>
+                      {log.language}
+                    </span>
+                    <span className="execution-history-time">
+                      {new Date(log.createdAt).toLocaleString()}
+                    </span>
+                    <span className={`execution-history-status ${log.error ? 'execution-history-status--error' : 'execution-history-status--success'}`}>
+                      {log.error ? 'Error' : 'Success'}
+                    </span>
+                  </div>
+                  <pre className="execution-history-code">
+                    {log.code.length > 200 ? log.code.slice(0, 200) + '...' : log.code}
+                  </pre>
+                </div>
+              ))}
+              {historyTotal > 10 && (
+                <div className="execution-history-pagination">
+                  <button
+                    disabled={historyPage <= 1}
+                    onClick={() => fetchHistory(historyPage - 1)}
+                    className="compiler-btn compiler-btn--reset"
+                  >
+                    Previous
+                  </button>
+                  <span style={{ color: '#a1a1aa', fontSize: '0.875rem' }}>
+                    Page {historyPage} of {Math.ceil(historyTotal / 10)}
+                  </span>
+                  <button
+                    disabled={historyPage >= Math.ceil(historyTotal / 10)}
+                    onClick={() => fetchHistory(historyPage + 1)}
+                    className="compiler-btn compiler-btn--reset"
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      )}
 
       {/* ── Hint & Solution controls ── */}
       {(totalHints > 0 || hasSolution) && (

@@ -4263,3 +4263,120 @@ select:focus {
     justify-content: center;
   }
 }
+
+.execution-history-panel {
+  background: #161b22;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  margin-top: 8px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.execution-history-loading,
+.execution-history-empty {
+  padding: 1.5rem;
+  text-align: center;
+  color: #8b949e;
+  font-size: 0.9rem;
+}
+
+.execution-history-item {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.execution-history-item:last-child {
+  border-bottom: none;
+}
+
+.execution-history-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.execution-history-item-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.4rem;
+}
+
+.execution-history-lang {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(167, 139, 250, 0.15);
+  color: #a78bfa;
+}
+
+.execution-history-lang--c,
+.execution-history-lang--cpp {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+}
+
+.execution-history-lang--python {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fbbf24;
+}
+
+.execution-history-lang--java {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+}
+
+.execution-history-lang--node,
+.execution-history-lang--javascript {
+  background: rgba(74, 222, 128, 0.15);
+  color: #4ade80;
+}
+
+.execution-history-time {
+  font-size: 0.75rem;
+  color: #8b949e;
+  flex: 1;
+}
+
+.execution-history-status {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.execution-history-status--success {
+  background: rgba(74, 222, 128, 0.12);
+  color: #4ade80;
+}
+
+.execution-history-status--error {
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+}
+
+.execution-history-code {
+  font-size: 0.8rem;
+  color: #c9d1d9;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0.5rem;
+  border-radius: 4px;
+  margin: 0;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-height: 80px;
+  overflow-y: hidden;
+}
+
+.execution-history-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}

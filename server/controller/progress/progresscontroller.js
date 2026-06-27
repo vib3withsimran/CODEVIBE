@@ -1,4 +1,5 @@
 const Progress = require('../../models/progress');
+const Analytics = require('../../models/analytics');
 const { getRedisClient } = require('../../config/redis');
 
 exports.getProgress = async (req, res) => {
@@ -32,6 +33,99 @@ exports.getProgress = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.exportProgress = async (req, res) => {
+  try {
+    const { email } = req.params;
+
+    if (req.user.email !== email) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
+    const SUBJECT_TOTALS = {
+      HTML: 10, CSS: 14, JavaScript: 29, 'C Programming': 17,
+      DBMS: 12, DSA: 12, Express: 10, MongoDB: 8,
+      'Node.js': 12, OOP: 14, React: 13,
+    };
+
+    const subjectMap = {
+      html: 'HTML', css: 'CSS', js: 'JavaScript', javascript: 'JavaScript',
+      react: 'React', node: 'Node.js', mongo: 'MongoDB', mongodb: 'MongoDB',
+      dbms: 'DBMS', oop: 'OOP', express: 'Express', c: 'C Programming', dsa: 'DSA',
+    };
+
+    const normalizeSubject = (lessonId) => {
+      if (!lessonId || typeof lessonId !== 'string') return 'Other';
+      const lower = lessonId.toLowerCase();
+      for (const key of Object.keys(subjectMap)) {
+        if (lower.startsWith(key)) return subjectMap[key];
+      }
+      return 'Other';
+    };
+
+    const progress = await Progress.findOne({ email }).lean();
+    const analyticsData = await Analytics.find({ email }).lean();
+
+    const completedLessonIds = new Set(progress?.completedLessons || []);
+    const scores = progress?.scores || {};
+
+    const subjectStats = {};
+    for (const entry of analyticsData) {
+      const subject = normalizeSubject(entry.lessonId);
+      if (!subjectStats[subject]) {
+        subjectStats[subject] = { completed: new Set(), totalScore: 0, count: 0 };
+      }
+      if (entry.lessonId) subjectStats[subject].completed.add(entry.lessonId);
+      if (typeof entry.score === 'number') {
+        subjectStats[subject].totalScore += entry.score;
+        subjectStats[subject].count += 1;
+      }
+    }
+
+    const rows = Object.entries(subjectStats).map(([subject, stats]) => {
+      const completed = stats.completed.size;
+      const total = SUBJECT_TOTALS[subject] || completed;
+      const avgScore = stats.count > 0 ? Math.round(stats.totalScore / stats.count) : 0;
+      return `"${subject}",${completed},${total},${avgScore}`;
+    });
+
+    const header = "Subject,Lessons Completed,Total Lessons,Average Score\n";
+    const csv = header + rows.join("\n");
+
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader("Content-Disposition", `attachment; filename=progress-${email}.csv`);
+    res.send(csv);
+  } catch (err) {
+    console.error("EXPORT ERROR:", err);
+    res.status(500).json({ message: "Failed to export" });
+  }
+};
+
+exports.updateDailyGoal = async (req, res) => {
+  try {
+    const { dailyGoal } = req.body;
+    const email = req.user.email;
+
+    if (!dailyGoal || dailyGoal < 1 || dailyGoal > 10) {
+      return res.status(400).json({ message: "Daily goal must be between 1 and 10" });
+    }
+
+    const progress = await Progress.findOneAndUpdate(
+      { email },
+      { dailyGoal },
+      { new: true }
+    );
+
+    if (!progress) {
+      return res.status(404).json({ message: "Progress not found" });
+    }
+
+    res.json({ success: true, dailyGoal: progress.dailyGoal });
+  } catch (err) {
+    console.error("UPDATE GOAL ERROR:", err);
+    res.status(500).json({ message: "Failed to update goal" });
   }
 };
 

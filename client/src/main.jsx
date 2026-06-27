@@ -226,7 +226,8 @@ import ScrollNavigator from "./components/common/ScrollNavigator";
 import GlobalBackNav from "./components/common/GlobalBackNav.jsx";
 import ErrorBoundary from "./components/ErrorBoundary.jsx";
 import { SearchProvider } from "./context/SearchContext.jsx";
-import  Contact  from "./components/Contact.jsx";
+import Contact from "./components/Contact.jsx";
+import StudyPlanner from "./components/StudyPlanner.jsx";
 import OAuthCallback from "./components/OAuthCallback.jsx";
 import LessonLayout from "./components/LessonLayout.jsx";
 import BookmarksPage from "./components/BookmarksPage.jsx";
@@ -256,6 +257,7 @@ createRoot(document.getElementById('root')).render(
               <Route path="/leaderboard" element={<Leaderboard />} />
               <Route path="/badges" element={<BadgesPage />} />
               <Route path="/flashcards" element={<Flashcard />} />
+              <Route path="/study-planner" element={<PrivateRoute><StudyPlanner /></PrivateRoute>} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/terms-of-service" element={<TermsOfService />} />
               <Route path="/report/:email" element={<ViewReport />} />
