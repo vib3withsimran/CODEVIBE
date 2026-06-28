@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const { JWT_SECRET, JWT_EXPIRES_IN } = require("../../config/jwt");
 
 const googleAuthCallback = (req, res) => {
   try {

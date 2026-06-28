@@ -40,7 +40,8 @@ export default function SnippetViewer() {
       await navigator.clipboard.writeText(snippet.code);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    } catch {
+    } catch (error) {
+    console.error("Error:", error);
       setCopied(false);
     }
   };

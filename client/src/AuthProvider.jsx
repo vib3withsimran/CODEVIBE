@@ -14,7 +14,8 @@ function loadAuthState() {
     if (user) {
       return { user };
     }
-  } catch {
+  } catch (error) {
+    console.error("Error:", error);
     // ignore parse errors
   }
   localStorage.removeItem("user");
@@ -45,7 +46,8 @@ export const AuthProvider = ({ children }) => {
         {},
         { withCredentials: true }
       );
-    } catch {
+    } catch (error) {
+      console.error("Error:", error);
       // clear local state regardless
     }
     localStorage.removeItem("user");

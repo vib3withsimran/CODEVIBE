@@ -6,6 +6,7 @@ dotenv.config();
 const routes = require("./routes/index");
 const passport = require("passport");
 require("./config/passport");
+const { connectRedis, getRedisClient } = require("./config/redis");
 const cookieParser = require("cookie-parser");
 
 const backend = express();
@@ -21,10 +22,10 @@ process.on("unhandledRejection", (reason) => {
   console.error("❌ Unhandled Rejection:", reason);
 });
 
+backend.use(cookieParser());
 backend.use(express.json());
 backend.use(express.urlencoded({ extended: true }));
 backend.use(passport.initialize());
-backend.use(cookieParser());
 
 // CORS Configuration - read allowed origins from environment or use defaults
 const allowedOrigins = (
@@ -44,7 +45,8 @@ const isLocalDevOrigin = (origin = "") => {
       hostname === "::1";
 
     return protocol.startsWith("http") && isLocalHost && Boolean(port);
-  } catch {
+  } catch (error) {
+    console.error("Error:", error);
     return false;
   }
 };
@@ -144,6 +146,8 @@ const connectToMongo = async () => {
     } catch (syncErr) {
       console.error("⚠️ Failed to sync database indexes:", syncErr.message);
     }
+
+    await connectRedis();
   } catch (err) {
     console.error("❌ MongoDB connection error:", err);
     if (process.env.NODE_ENV === "production") {
@@ -167,8 +171,15 @@ const gracefulShutdown = (signal) => {
   console.log(`\n⚠️ ${signal} received. Starting graceful shutdown...`);
 
   if (server && server.close) {
-    server.close(() => {
+    server.close(async () => {
       console.log("🏁 HTTP server closed.");
+      
+      const redisClient = getRedisClient();
+      if (redisClient) {
+        await redisClient.quit();
+        console.log("🔌 Redis connection closed.");
+      }
+
       mongoose.connection.close(false).then(() => {
         console.log("🔌 MongoDB connection closed.");
         process.exit(0);
@@ -178,6 +189,11 @@ const gracefulShutdown = (signal) => {
       });
     });
   } else {
+    const redisClient = getRedisClient();
+    if (redisClient) {
+      redisClient.quit().then(() => console.log("🔌 Redis connection closed.")).catch(console.error);
+    }
+
     mongoose.connection.close(false).then(() => {
       console.log("🔌 MongoDB connection closed.");
       process.exit(0);

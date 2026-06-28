@@ -88,6 +88,7 @@ const generateHint = (stderr = "", language = "") => {
   return "💡 Review your code carefully. Compare it with the example in the lesson above.";
 };
 
+
 // ─── Main controller ─────────────────────────────────────────────────────────
 
 const executeCode = async (req, res) => {
@@ -108,6 +109,7 @@ const executeCode = async (req, res) => {
     stderr = result.stderr || "";
     executionTime = result.executionTime || 0;
   } catch (e) {
+    console.error("Error:", e);
     if (e instanceof ExecutionError) {
       stderr = e.stderr || e.stdout || e.message;
       executionTime = e.executionTime || 0;
@@ -155,4 +157,28 @@ const executeCode = async (req, res) => {
   });
 };
 
-module.exports = { executeCode };
+const getExecutionHistory = async (req, res) => {
+  try {
+    const { language, search, page = 1, limit = 20 } = req.query;
+    const email = req.user.email;
+    const filter = { email };
+
+    if (language) filter.language = language;
+    if (search) filter.code = { $regex: search, $options: "i" };
+
+    const total = await ExecuteLog.countDocuments(filter);
+    const logs = await ExecuteLog.find(filter)
+      .select("language code output error createdAt")
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(Number(limit))
+      .lean();
+
+    res.json({ success: true, logs, total, page: Number(page), limit: Number(limit) });
+  } catch (err) {
+    console.error("GET EXECUTION HISTORY ERROR:", err);
+    res.status(500).json({ message: "Failed to fetch history" });
+  }
+};
+
+module.exports = { executeCode, getExecutionHistory };

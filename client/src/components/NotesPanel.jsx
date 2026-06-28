@@ -84,7 +84,8 @@ const NotesPanel = ({ lessonId, lessonTitle }) => {
         hour: "2-digit",
         minute: "2-digit",
       });
-    } catch {
+    } catch (error) {
+    console.error("Error:", error);
       return "";
     }
   };

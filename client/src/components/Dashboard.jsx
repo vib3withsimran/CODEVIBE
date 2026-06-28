@@ -7,6 +7,7 @@ import {
   ArrowRight,
   BarChart3,
   BookOpen,
+  Download,
   LayoutDashboard,
   Sparkles,
   Star,
@@ -987,6 +988,7 @@ const Dashboard = () => {
         );
       }
     } catch (err) {
+    console.error("Error:", err);
       setError(err.response?.data?.message || "Unable to save avatar.");
     }
   };
@@ -1034,6 +1036,7 @@ const Dashboard = () => {
       }
       setEditMode(false);
     } catch (err) {
+    console.error("Error:", err);
       setError(err.response?.data?.message || "Unable to save profile.");
     } finally {
       setSaving(false);
@@ -1187,11 +1190,40 @@ const Dashboard = () => {
           numberOfPieces={500}
         />
       )}
-      <header className="dashboard-hero">
+      <header className="dashboard-hero" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
           <p className="dashboard-subtitle">Welcome back</p>
           <h1>Hi, {user.username || user.email}</h1>
         </div>
+        <button
+          className="export-csv-btn"
+          onClick={() => {
+            const url = `${API_BASE_URL}/api/progress/export/${encodeURIComponent(email)}?format=csv`;
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute("download", "");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          }}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            padding: '0.6rem 1.2rem',
+            border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: '8px',
+            background: 'rgba(255,255,255,0.05)',
+            color: '#e4e4e7',
+            cursor: 'pointer',
+            fontSize: '0.875rem',
+            fontWeight: 500,
+            transition: 'background 0.2s',
+          }}
+        >
+          <Download size={16} />
+          Export CSV
+        </button>
       </header>
 
       {loading ? (

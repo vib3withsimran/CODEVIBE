@@ -36,7 +36,8 @@ const NotificationDropdown = ({ notifications, unreadCount, loading, onMarkAsRea
       if (hours < 24) return `${hours}h ago`;
       if (days < 7) return `${days}d ago`;
       return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-    } catch {
+    } catch (error) {
+    console.error("Error:", error);
       return "";
     }
   };
