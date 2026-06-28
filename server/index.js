@@ -7,6 +7,7 @@ const routes = require("./routes/index");
 const passport = require("passport");
 require("./config/passport");
 const { connectRedis, getRedisClient } = require("./config/redis");
+const cookieParser = require("cookie-parser");
 
 const backend = express();
 backend.set("trust proxy", 1);
@@ -21,6 +22,7 @@ process.on("unhandledRejection", (reason) => {
   console.error("❌ Unhandled Rejection:", reason);
 });
 
+backend.use(cookieParser());
 backend.use(express.json());
 backend.use(express.urlencoded({ extended: true }));
 backend.use(passport.initialize());

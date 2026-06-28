@@ -18,7 +18,6 @@ const OAuthCallback = () => {
 
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
-    const token = searchParams.get("token");
     const userRaw = searchParams.get("user");
     const errorParam = searchParams.get("error");
 
@@ -28,7 +27,7 @@ const OAuthCallback = () => {
       return;
     }
 
-    if (!token || !userRaw) {
+    if (!userRaw) {
       setError("Missing authentication data. Redirecting to login...");
       setTimeout(() => navigate("/login"), 3000);
       return;
@@ -36,7 +35,7 @@ const OAuthCallback = () => {
 
     try {
       const user = JSON.parse(decodeURIComponent(userRaw));
-      login(user, token);
+      login(user);
       navigate("/dashboard", { replace: true });
     } catch (error) {
     console.error("Error:", error);

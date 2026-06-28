@@ -16,6 +16,7 @@ const { googleAuthCallback } = require("../../controller/Auth/googleAuth");
 
 Router.post("/register", authLimiter, register);
 Router.post("/login", authLimiter, login);
+Router.post("/refresh", require("../../controller/Auth/refresh"));
 Router.post("/logout", verifyToken, logout);
 Router.post("/forgot-password", authLimiter, forgotPassword);
 Router.post("/reset-password", authLimiter, resetPassword);

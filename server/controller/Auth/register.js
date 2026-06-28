@@ -2,7 +2,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const UserModel = require("../../models/user.models");
 const momsvalidation = require("../../services/validationScheme");
-const { JWT_SECRET, JWT_EXPIRES_IN } = require("../../config/jwt");
+const { JWT_SECRET, JWT_EXPIRES_IN, REFRESH_TOKEN_SECRET, REFRESH_TOKEN_EXPIRES_IN } = require("../../config/jwt");
 const { validatePassword } = require("../../utils/passwordValidator");
 
 const register = async (req, res, next) => {
@@ -92,10 +92,38 @@ const register = async (req, res, next) => {
       }
     );
 
+    const refreshToken = jwt.sign(
+      {
+        userId: userCreate._id,
+        email: userCreate.email,
+        username: userCreate.username,
+      },
+      REFRESH_TOKEN_SECRET,
+      {
+        expiresIn: REFRESH_TOKEN_EXPIRES_IN,
+      }
+    );
+
+    const isProd = process.env.NODE_ENV === "production";
+
+    res.cookie("accessToken", token, {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: "strict",
+      maxAge: 15 * 60 * 1000 // 15 mins
+    });
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: "strict",
+      path: "/api/auth/refresh",
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    });
+
     return res.status(201).json({
       success: true,
       message: "User registered successfully",
-      token,
       user: {
         id: userCreate._id,
         username: userCreate.username,
