@@ -463,6 +463,7 @@ const runMongoSimulation = async (code) => {
     await new Promise((r) => setTimeout(r, 300));
 
   } catch (e) {
+    console.error("Error:", e);
     logs.push(`Error: ${e.message}`);
   }
 

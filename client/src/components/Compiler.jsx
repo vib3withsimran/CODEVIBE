@@ -8,6 +8,7 @@ import Dropdown from "./common/Dropdown";
 import HintModal from "./HintModal";
 import SolutionModal from "./SolutionModal";
 import { useHints } from "../hooks/useHints";
+import { Copy, Download, History, Share2 } from "lucide-react";
 
 const SCORING = (attempt) =>
   attempt === 1 ? 100 :
@@ -139,6 +140,11 @@ const Compiler = ({
   const [expected, setExpected]         = useState(undefined);
   const [got, setGot]                   = useState(undefined);
   const [status, setStatus]             = useState("");
+  const [historyOpen, setHistoryOpen]    = useState(false);
+  const [historyLogs, setHistoryLogs]    = useState([]);
+  const [historyTotal, setHistoryTotal]  = useState(0);
+  const [historyPage, setHistoryPage]    = useState(1);
+  const [historyLoading, setHistoryLoading] = useState(false);
   const { token }                        = useAuth();
 
   const iframeRef = useRef(null);
@@ -183,12 +189,37 @@ const Compiler = ({
     }
   }, [solution]);
 
+  // ── execution history ──────────────────────────────────────────────────────
+  const fetchHistory = useCallback(async (pageNum = 1) => {
+    if (!token) return;
+    setHistoryLoading(true);
+    try {
+      const { data } = await axios.get(`${API_BASE_URL}/api/execute/history?page=${pageNum}&limit=10`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (data.success) {
+        setHistoryLogs(data.logs);
+        setHistoryTotal(data.total);
+        setHistoryPage(data.page);
+      }
+    } catch (err) {
+      console.error("Failed to fetch history:", err);
+    } finally {
+      setHistoryLoading(false);
+    }
+  }, [token]);
+
+  useEffect(() => {
+    fetchHistory(1);
+  }, [fetchHistory]);
+
   // ── copy / download ──────────────────────────────────────────────────────
   const copyCode = async () => {
     try {
       await navigator.clipboard.writeText(code);
       setStatus("📋 Code copied!");
-    } catch {
+    } catch (error) {
+    console.error("Error:", error);
       setStatus("Failed to copy code");
     }
   };
@@ -460,11 +491,13 @@ const Compiler = ({
                 const out = document.getElementById('out');
                 const logs = [];
                 const oldLog = console.log;
-                console.log = (...args) => { logs.push(args.join(" ")); try{oldLog(...args)}catch(e){}; out.textContent = logs.join("\\n"); };
+                console.log = (...args) => { logs.push(args.join(" ")); try{oldLog(...args)}catch (e) {
+    console.error("Error:", e);}; out.textContent = logs.join("\\n"); };
                 const killer = setTimeout(() => { throw new Error("Timeout"); }, 1500);
                 ${code}
                 clearTimeout(killer);
-              } catch(e) { document.body.textContent = "Error: " + (e?.message || e); }
+              } catch (e) {
+    console.error("Error:", e); document.body.textContent = "Error: " + (e?.message || e); }
             })();
           <${"/"}script>
         </body>
@@ -507,14 +540,16 @@ const Compiler = ({
               const out = document.getElementById('out');
               const logs = [];
               const oldLog = console.log;
-              console.log = (...args) => { logs.push(args.join(' ')); try{oldLog(...args)}catch(_){}; out.textContent = logs.join("\\n"); };
+              console.log = (...args) => { logs.push(args.join(' ')); try{oldLog(...args)}catch (_) {
+    console.error("Error:", _);}; out.textContent = logs.join("\\n"); };
               const killer = setTimeout(() => { throw new Error('Timeout'); }, 2000);
               ${code}
               const rootEl = document.getElementById('root');
               const root = ReactDOM.createRoot(rootEl);
               if (typeof App === 'function') root.render(React.createElement(App));
               clearTimeout(killer);
-            } catch(e) { document.body.textContent = 'Error: ' + (e?.message || e); }
+            } catch (e) {
+    console.error("Error:", e); document.body.textContent = 'Error: ' + (e?.message || e); }
           </script>
         </body>
       </html>
@@ -556,6 +591,7 @@ const Compiler = ({
         fail({ type: "OutputMismatch", message: "", exp: expStr, got: out, ms });
       }
     } catch (e) {
+    console.error("Error:", e);
       const data = e?.response?.data || {};
       fail({
         type:    data.errorType    || "ExecutionError",
@@ -634,35 +670,34 @@ const Compiler = ({
           }}
         />
       )}
+      {/* Compiler Toolbar */}
+       <div className="compiler-toolbar">
+    <button
+      title="Copy Code"
+      onClick={copyCode}
+      className="compiler-icon-btn"
+    >
+      <Copy size={18} />
+    </button>
+
+    <button
+      title="Download Code"
+      onClick={downloadCode}
+      className="compiler-icon-btn"
+    >
+      <Download size={18} />
+    </button>
+
+    <button
+      title="Share Code"
+      onClick={shareCode}
+      className="compiler-icon-btn"
+    >
+      <Share2 size={18} />
+    </button>
+  </div>
 
       <div className="compiler-editor-wrap">
-        {/* toolbar */}
-        <div className="compiler-toolbar">
-          <button
-              title="Copy Code"
-              aria-label="Copy code to clipboard"
-              onClick={copyCode}
-              className="compiler-btn compiler-btn--copy"
-            >
-            📋 Copy
-          </button>
-          <button
-              title="Download Code"
-              aria-label="Download code file"
-              onClick={downloadCode}
-              className="compiler-btn compiler-btn--download"
-            >
-            ⬇️ Download
-          </button>
-          <button
-              title="Share Code"
-              aria-label="Share code snippet"
-              onClick={shareCode}
-              className="compiler-btn compiler-btn--share"
-            >
-            🔗 Share
-          </button>
-        </div>
 
         {/* editor */}
         <textarea
@@ -711,6 +746,83 @@ const Compiler = ({
           </span>
         )}
       </div>
+
+      {/* ── Execution History ── */}
+      <button
+        onClick={() => {
+          setHistoryOpen(!historyOpen);
+          if (!historyOpen && historyLogs.length === 0) fetchHistory(1);
+        }}
+        className="compiler-btn compiler-btn--hint"
+        style={{ width: '100%', marginTop: '8px' }}
+      >
+        <History size={16} style={{ marginRight: '6px' }} />
+        Execution History ({historyTotal})
+      </button>
+
+      {historyOpen && (
+        <div className="execution-history-panel">
+          {historyLoading ? (
+            <div className="execution-history-loading">Loading...</div>
+          ) : historyLogs.length === 0 ? (
+            <div className="execution-history-empty">No execution history yet.</div>
+          ) : (
+            <>
+              {historyLogs.map((log) => (
+                <div
+                  key={log._id}
+                  className="execution-history-item"
+                  onClick={() => {
+                    setCode(log.code);
+                    const langMap = {
+                      node: 'node', c: 'c', cpp: 'cpp', python: 'python',
+                      java: 'java', dbms: 'dbms', mongo: 'mongo',
+                    };
+                    if (langMap[log.language]) setLanguage(langMap[log.language]);
+                    setHistoryOpen(false);
+                  }}
+                >
+                  <div className="execution-history-item-header">
+                    <span className={`execution-history-lang execution-history-lang--${log.language}`}>
+                      {log.language}
+                    </span>
+                    <span className="execution-history-time">
+                      {new Date(log.createdAt).toLocaleString()}
+                    </span>
+                    <span className={`execution-history-status ${log.error ? 'execution-history-status--error' : 'execution-history-status--success'}`}>
+                      {log.error ? 'Error' : 'Success'}
+                    </span>
+                  </div>
+                  <pre className="execution-history-code">
+                    {log.code.length > 200 ? log.code.slice(0, 200) + '...' : log.code}
+                  </pre>
+                </div>
+              ))}
+              {historyTotal > 10 && (
+                <div className="execution-history-pagination">
+                  <button
+                    disabled={historyPage <= 1}
+                    onClick={() => fetchHistory(historyPage - 1)}
+                    className="compiler-btn compiler-btn--reset"
+                  >
+                    Previous
+                  </button>
+                  <span style={{ color: '#a1a1aa', fontSize: '0.875rem' }}>
+                    Page {historyPage} of {Math.ceil(historyTotal / 10)}
+                  </span>
+                  <button
+                    disabled={historyPage >= Math.ceil(historyTotal / 10)}
+                    onClick={() => fetchHistory(historyPage + 1)}
+                    className="compiler-btn compiler-btn--reset"
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      )}
 
       {/* ── Hint & Solution controls ── */}
       {(totalHints > 0 || hasSolution) && (

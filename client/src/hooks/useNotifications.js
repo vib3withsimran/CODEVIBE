@@ -69,6 +69,7 @@ export const useNotifications = () => {
         const normalizedNotif = { ...newNotif, _id: newNotif.id || newNotif._id };
         return [normalizedNotif, ...prev];
       });
+      feat/realtime-websocket-notifications
       setUnreadCount((prev) => prev + 1);
     });
 
@@ -103,6 +104,14 @@ export const useNotifications = () => {
       socket.disconnect();
     };
   }, [fetchNotifications, token, user?.email]);
+
+      setUnreadCount(response.data?.count || 0);
+    } catch (error) {
+    console.error("Error:", error);
+      // silently fail for count
+    }
+  }, [user?.email, token]);
+main
 
   const markAsRead = async (id) => {
     if (!token) return;

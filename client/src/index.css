@@ -2279,6 +2279,7 @@ select:focus {
   flex-direction: column;
   gap: 10px;
   box-shadow: 0 0 30px rgba(255, 77, 109, 0.12);
+  justify-content: space-between;
 }
 
 .compiler-lang-select {
@@ -2305,12 +2306,11 @@ select:focus {
 }
 
 .compiler-toolbar {
-  position: absolute;
-  top: 8px;
-  right: 8px;
+  justify-content: flex-end;
   display: flex;
   gap: 6px;
   z-index: 10;
+  margin-left:auto;
 }
 
 .compiler-textarea {
@@ -3355,48 +3355,135 @@ select:focus {
   padding: 60px 20px;
   text-align: center;
   background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0a0e27 100%);
+  overflow: hidden; /* Prevent horizontal scroll from marquee */
 }
 
 .testimonials h2 {
-  font-size: 2rem;
+  font-size: 2.4rem;
   margin-bottom: 10px;
   color: #ff4d6d;
-  text-shadow: 0 0 12px rgba(255, 77, 109, 0.8);
+  text-shadow: 0 0 15px rgba(255, 77, 109, 0.4);
+}
+
+.testimonial-subtitle {
+  color: #b0b8d4;
+  margin-bottom: 40px;
+  font-size: 1.1rem;
+}
+
+.testimonials-wrapper {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  padding: 20px 0;
+  /* Add fade effect on sides */
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
 }
 
 .testimonial-container {
   display: flex;
-  justify-content: center;
-  gap: 20px;
-  flex-wrap: wrap;
-  margin-top: 20px;
+  gap: 30px;
+  width: max-content;
+  animation: scrollTestimonials 30s linear infinite;
+}
+
+.testimonial-container:hover {
+  animation-play-state: paused;
+}
+
+@keyframes scrollTestimonials {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(-50% - 15px)); /* half width plus half gap */
+  }
 }
 
 .testimonial-card {
-  background: rgba(26, 31, 58, 0.95);
-  padding: 20px;
-  width: 280px;
-  border-radius: 12px;
-  border: 2px solid rgba(255, 77, 109, 0.5);
-  box-shadow: 0 0 20px rgba(255, 77, 109, 0.25);
-  transition: all 0.3s ease;
+  background: rgba(26, 31, 58, 0.85);
+  backdrop-filter: blur(10px);
+  padding: 30px;
+  width: 320px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 77, 109, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), inset 0 0 20px rgba(255, 77, 109, 0.05);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: flex;
+  flex-direction: column;
+  text-align: left;
 }
 
 .testimonial-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 0 25px rgba(255, 77, 109, 0.6);
-  border-color: #ff4d6d;
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 77, 109, 0.3);
+  border-color: rgba(255, 77, 109, 0.8);
+  background: rgba(30, 36, 66, 0.95);
 }
 
-.testimonial-card p {
-  font-size: 1rem;
-  color: #b0b8d4;
+.quote-icon {
+  color: rgba(255, 77, 109, 0.4);
+  margin-bottom: 15px;
+  transition: color 0.3s ease;
+}
+
+.testimonial-card:hover .quote-icon {
+  color: #ff4d6d;
+}
+
+.testimonial-rating {
+  display: flex;
+  gap: 4px;
   margin-bottom: 15px;
 }
 
-.testimonial-card h4 {
-  color: #ff85a1;
+.testimonial-feedback {
+  font-size: 1.05rem;
+  color: #d7d7e0;
+  line-height: 1.6;
+  margin-bottom: 25px;
+  flex-grow: 1;
+  font-style: italic;
+}
+
+.testimonial-user {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 20px;
+}
+
+.testimonial-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255, 77, 109, 0.5);
+  transition: border-color 0.3s ease;
+}
+
+.testimonial-card:hover .testimonial-avatar {
+  border-color: #ff4d6d;
+}
+
+.testimonial-user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.testimonial-user-info h3 {
+  color: #ffffff;
+  font-size: 1.1rem;
   font-weight: 600;
+  margin: 0 0 4px 0;
+}
+
+.testimonial-user-info span {
+  color: #ff85a1;
+  font-size: 0.9rem;
 }
 
 /* ===== VIEW REPORT PAGE ===== */
@@ -4175,4 +4262,121 @@ select:focus {
     text-align: center;
     justify-content: center;
   }
+}
+
+.execution-history-panel {
+  background: #161b22;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  margin-top: 8px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.execution-history-loading,
+.execution-history-empty {
+  padding: 1.5rem;
+  text-align: center;
+  color: #8b949e;
+  font-size: 0.9rem;
+}
+
+.execution-history-item {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.execution-history-item:last-child {
+  border-bottom: none;
+}
+
+.execution-history-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.execution-history-item-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.4rem;
+}
+
+.execution-history-lang {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(167, 139, 250, 0.15);
+  color: #a78bfa;
+}
+
+.execution-history-lang--c,
+.execution-history-lang--cpp {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+}
+
+.execution-history-lang--python {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fbbf24;
+}
+
+.execution-history-lang--java {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+}
+
+.execution-history-lang--node,
+.execution-history-lang--javascript {
+  background: rgba(74, 222, 128, 0.15);
+  color: #4ade80;
+}
+
+.execution-history-time {
+  font-size: 0.75rem;
+  color: #8b949e;
+  flex: 1;
+}
+
+.execution-history-status {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.execution-history-status--success {
+  background: rgba(74, 222, 128, 0.12);
+  color: #4ade80;
+}
+
+.execution-history-status--error {
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+}
+
+.execution-history-code {
+  font-size: 0.8rem;
+  color: #c9d1d9;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0.5rem;
+  border-radius: 4px;
+  margin: 0;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-height: 80px;
+  overflow-y: hidden;
+}
+
+.execution-history-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
 }

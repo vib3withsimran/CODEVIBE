@@ -75,7 +75,7 @@ const Signup = () => {
         setResponseMsg(data.message || "Account created successfully 🎉");
 
         // Authenticate the user automatically after successful registration
-        login(data.user, data.token);
+        login(data.user);
 
         setTimeout(() => {
           navigate("/dashboard", { state: location.state });

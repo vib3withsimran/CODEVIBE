@@ -1,18 +1,31 @@
 const router = require("express").Router();
 const crypto = require("crypto");
 const Snippet = require("../../models/snippet");
+const verifyToken = require("../../middleware/authMiddleware");
 
-router.post("/", async (req, res) => {
+const MAX_CODE_LENGTH = 10000; // matches executeController.js's cap
+
+router.post("/", verifyToken, async (req, res) => {
   try {
-    const { code, language, lessonId, title, username, score } = req.body;
+    const { code, language, lessonId, title, score } = req.body;
     if (!code || !language) {
       return res.status(400).json({ message: "Code and language are required" });
     }
+
+    // Username comes from the verified JWT payload, never from req.body
+    const username = req.user?.username || req.user?.email || "Anonymous";
+
     const slug = crypto.randomBytes(6).toString("base64url");
+    feat/realtime-websocket-notifications
     await Snippet.create({
       code, language, lessonId,
+    const snippet = await Snippet.create({
+      code: String(code).slice(0, MAX_CODE_LENGTH),
+      language,
+      lessonId,
+      main
       title: title || "Untitled",
-      username: username || "Anonymous",
+      username,
       score: score ?? null,
       slug,
     });
