@@ -6,11 +6,9 @@ dotenv.config();
 const routes = require("./routes/index");
 const passport = require("passport");
 require("./config/passport");
-feat/realtime-websocket-notifications
 const { initSocketServer } = require("./socket");
 const { connectRedis, getRedisClient } = require("./config/redis");
 const cookieParser = require("cookie-parser");
-main
 
 const backend = express();
 backend.set("trust proxy", 1);

@@ -16,14 +16,10 @@ router.post("/", verifyToken, async (req, res) => {
     const username = req.user?.username || req.user?.email || "Anonymous";
 
     const slug = crypto.randomBytes(6).toString("base64url");
-    feat/realtime-websocket-notifications
     await Snippet.create({
-      code, language, lessonId,
-    const snippet = await Snippet.create({
       code: String(code).slice(0, MAX_CODE_LENGTH),
       language,
       lessonId,
-      main
       title: title || "Untitled",
       username,
       score: score ?? null,

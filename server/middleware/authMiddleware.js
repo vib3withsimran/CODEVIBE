@@ -24,11 +24,8 @@ const verifyToken = (req, res, next) => {
     const decoded = jwt.verify(token, JWT_SECRET);
     req.user = decoded;
     next();
-    feat/realtime-websocket-notifications
-  } catch {
   } catch (err) {
     console.error("Error:", err);
-    main
     return res.status(401).json({ message: "Invalid or expired token" });
   }
 };
