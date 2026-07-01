@@ -40,5 +40,6 @@ coverage/
 # optional npm cache
 .npm
 
-# lock files - yarn.lock excluded but package-lock.json is committed for CI/CD
+# lock files - Windows-generated lockfile breaks Linux CI (missing native binaries)
+package-lock.json
 yarn.lock
