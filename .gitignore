@@ -40,6 +40,5 @@ coverage/
 # optional npm cache
 .npm
 
-# lock files (optional if team project)
-package-lock.json
+# lock files - yarn.lock excluded but package-lock.json is committed for CI/CD
 yarn.lock
