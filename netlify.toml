@@ -1,9 +1,11 @@
 [build]
-  command = "npm run build --workspace=client"
+  command = "npm install --legacy-peer-deps && npm run build --workspace=client"
   publish = "client/dist"
 
 [build.environment]
   NODE_VERSION = "22"
+  NPM_VERSION = "10.9.2"
+  CI = "false"
 
 [[redirects]]
   from = "/*"
@@ -13,5 +15,5 @@
 [[headers]]
   for = "/*"
   [headers.values]
-    "X-Frame-Options" = "DENY"
-    "X-Content-Type-Options" = "nosniff"
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
