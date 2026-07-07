@@ -1,6 +1,6 @@
 const LocalExecutionStrategy = require("./strategies/LocalExecutionStrategy");
 const DockerExecutionStrategy = require("./strategies/DockerExecutionStrategy");
-const { TimeoutError, ExecutionError } = require("../utils/errors");
+const { TimeoutError, ExecutionError } = require("../../utils/errors");
 
 class CompilerService {
   constructor() {

@@ -84,11 +84,8 @@ const generateHint = (stderr = "", language = "") => {
     return "💡 Make sure your main() function or method returns the correct type (e.g., return 0; for C/C++).";
   if ((language === "c" || language === "cpp") && s.includes("implicit"))
     return "💡 In C/C++, you must declare functions before calling them. Add a function prototype or move the definition above the call.";
-
   return "💡 Review your code carefully. Compare it with the example in the lesson above.";
 };
-
-
 // ─── Main controller ─────────────────────────────────────────────────────────
 
 const executeCode = async (req, res) => {

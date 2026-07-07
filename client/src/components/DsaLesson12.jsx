@@ -62,7 +62,8 @@ const DSALesson12 = () => {
 
   const handleRun = (userCode) => {
     try {
-      const result = eval(userCode);
+      const fn = new Function(userCode);
+      const result = fn();
       setOutput(result || "Welcome to DSA");
       if (result === undefined || result === "Welcome to DSA") {
         setIsCorrect(true);

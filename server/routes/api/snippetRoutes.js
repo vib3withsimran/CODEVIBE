@@ -16,7 +16,7 @@ router.post("/", verifyToken, async (req, res) => {
     const username = req.user?.username || req.user?.email || "Anonymous";
 
     const slug = crypto.randomBytes(6).toString("base64url");
-    const snippet = await Snippet.create({
+    await Snippet.create({
       code: String(code).slice(0, MAX_CODE_LENGTH),
       language,
       lessonId,
