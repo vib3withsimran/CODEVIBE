@@ -5,6 +5,8 @@ const momsvalidation = require("../../services/validationScheme");
 const { JWT_SECRET, JWT_EXPIRES_IN, REFRESH_TOKEN_SECRET, REFRESH_TOKEN_EXPIRES_IN } = require("../../config/jwt");
 const { validatePassword } = require("../../utils/passwordValidator");
 
+const escapeRegex = (value = "") => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 const register = async (req, res, next) => {
   try {
     const username = req.body.username?.trim();
@@ -48,7 +50,22 @@ const register = async (req, res, next) => {
       });
     }
 
-    // Check existing user
+    // Check existing username
+    console.log("🔍 Checking existing user for username:", username);
+    const usernameExist = await UserModel.findOne({
+      username: { $regex: `^${escapeRegex(username)}$`, $options: "i" },
+    });
+
+    if (usernameExist) {
+      console.log("❌ Registration failed: Username already exists");
+      return res.status(409).json({
+        success: false,
+        message: "Username already exists. Please choose a different username.",
+        field: "username",
+      });
+    }
+
+    // Check existing user by email
     console.log("🔍 Checking existing user for email:", email);
     const userExist = await UserModel.findOne({
       email: email,
@@ -60,6 +77,7 @@ const register = async (req, res, next) => {
       return res.status(409).json({
         success: false,
         message: "Account with this Email already exists",
+        field: "email",
       });
     }
 
@@ -142,13 +160,22 @@ const register = async (req, res, next) => {
       console.error("- error.keyPattern:", error.keyPattern);
       console.error("- error.keyValue:", error.keyValue);
 
-      const duplicateField = error.keyValue ? Object.keys(error.keyValue)[0] : "unknown_field";
+      const duplicateField = error.keyValue ? Object.keys(error.keyValue)[0] : (error.keyPattern ? Object.keys(error.keyPattern)[0] : "unknown_field");
+
+      if (duplicateField === "username" || (error.keyPattern && error.keyPattern.username)) {
+        return res.status(409).json({
+          success: false,
+          message: "Username already exists. Please choose a different username.",
+          field: "username",
+        });
+      }
+
       return res.status(409).json({
         success: false,
         message: duplicateField === "email" 
-          ? "User already exists" 
+          ? "Account with this Email already exists" 
           : `Registration failed: A user with this ${duplicateField} already exists.`,
-        field: Object.keys(error.keyPattern || {})[0]
+        field: duplicateField,
       });
     }
 

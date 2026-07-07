@@ -25,6 +25,7 @@ const Signup = () => {
 
   const [responseMsg, setResponseMsg] = useState("");
   const [passwordErrors, setPasswordErrors] = useState([]);
+  const [usernameError, setUsernameError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [submitAttempted, setSubmitAttempted] = useState(false);
   const passwordMismatch =
@@ -32,6 +33,9 @@ const Signup = () => {
     formData.password !== formData.confirmPassword;
 
   const handleChange = (e) => {
+    if (e.target.name === "username") {
+      setUsernameError(false);
+    }
     setFormData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
@@ -44,6 +48,7 @@ const Signup = () => {
 
     setResponseMsg("");
     setPasswordErrors([]);
+    setUsernameError(false);
 
     // 🔐 Frontend validations
     if (!formData.year) {
@@ -87,13 +92,18 @@ const Signup = () => {
     } catch (error) {
       console.error("❌ Signup error:", error.response?.data || error.message);
 
+      const data = error.response?.data;
+      if (data?.field === "username" || data?.message?.toLowerCase().includes("username already exists")) {
+        setUsernameError(true);
+      }
+
       // Handle password validation errors from backend
-      if (error.response?.data?.passwordErrors) {
-        setPasswordErrors(error.response.data.passwordErrors);
+      if (data?.passwordErrors) {
+        setPasswordErrors(data.passwordErrors);
         setResponseMsg("Password does not meet security requirements");
       } else {
         const msg =
-          error.response?.data?.message ||
+          data?.message ||
           "Something went wrong. Please try again.";
         setResponseMsg(msg);
       }
@@ -118,12 +128,15 @@ const Signup = () => {
             <h1>Create Account</h1>
 
             {/* Username */}
-            <label>USERNAME:</label>
+            <label htmlFor="username">USERNAME:</label>
             <input
+              id="username"
               name="username"
               value={formData.username}
               onChange={handleChange}
               placeholder="Enter username"
+              className={usernameError ? "input-error" : ""}
+              aria-invalid={usernameError}
               required
             />
 
