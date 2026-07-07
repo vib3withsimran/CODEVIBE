@@ -60,8 +60,9 @@ header {
   /* border-bottom: 3px solid #ff4d6d;
   box-shadow: 0 0 30px rgba(255, 77, 109, 0.5),
   inset 0 0 20px rgba(255, 77, 109, 0.1); */
-  overflow-x: hidden;
-  z-index: 99998;
+  position: relative;
+  overflow: visible;
+  z-index: 100;
 }
 
 /* Header glow animation */
@@ -1562,6 +1563,8 @@ textarea::placeholder {
 .dropdown {
   position: relative;
   display: inline-block;
+  overflow: visible;
+  z-index: 120;
 }
 
 /* =========================================
@@ -1620,6 +1623,17 @@ textarea::placeholder {
    DROPDOWN PANEL
 ========================================= */
 
+@keyframes dropdownFadeSlide {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
 .dropdown-content {
   position: absolute;
   top: calc(100% + 10px);
@@ -1638,9 +1652,10 @@ textarea::placeholder {
 
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
 
-  z-index: 9999;
+  z-index: 130;
+  pointer-events: auto;
 
-  animation: none;
+  animation: dropdownFadeSlide 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* =========================================
@@ -2656,6 +2671,7 @@ select:focus {
   padding: 20px;
   position: relative;
   overflow: visible;
+  z-index: 100;
   /* allow dropdown to escape */
   display: flex;
   flex-direction: column;
@@ -2686,13 +2702,12 @@ select:focus {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 999999;
+  z-index: 110;
   width: 100%;
   background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0a0e27 100%);
   padding: 1rem;
   border-bottom: 3px solid #ff4d6d;
-  overflow-x: auto;
-  scrollbar-width: none;
+  overflow: visible;
 }
 
 .header-top::-webkit-scrollbar {
@@ -2740,7 +2755,9 @@ select:focus {
   display: flex;
   gap: 0.75rem;
   align-items: center;
-  z-index: 1;
+  position: relative;
+  z-index: 110;
+  overflow: visible;
 }
 
 /* Hamburger — hidden on desktop */
@@ -2871,6 +2888,9 @@ select:focus {
   border-radius: 0;
   box-shadow: none;
   background: transparent;
+}
+
+.header-title-row h1 {
   font-size: clamp(2rem, 5vw, 3.5rem);
   font-weight: 900;
   background: linear-gradient(135deg, #ff4d6d, #ff85a1, #ff6b81);
