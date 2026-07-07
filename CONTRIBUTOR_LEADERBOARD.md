@@ -2,7 +2,7 @@
 
 This leaderboard is generated automatically for `JiyaBatra/CODEVIBE-` by GitHub Actions.
 
-Last updated: 2026-07-06
+Last updated: 2026-07-07
 
 ## Scoring
 
@@ -19,13 +19,13 @@ Last updated: 2026-07-06
 | 3 | [@sricharan-213](https://github.com/sricharan-213) | 131 | 8 | 7 | 9 |
 | 4 | [@Mahi-19-design](https://github.com/Mahi-19-design) | 127 | 6 | 5 | 13 |
 | 5 | [@simran-nitj](https://github.com/simran-nitj) | 124 | 7 | 6 | 10 |
-| 6 | [@DebasmitaBose0](https://github.com/DebasmitaBose0) | 115 | 0 | 0 | 23 |
-| 7 | [@Dhruvil20060](https://github.com/Dhruvil20060) | 111 | 8 | 6 | 7 |
-| 8 | [@vasheekhan](https://github.com/vasheekhan) | 110 | 5 | 3 | 14 |
-| 9 | [@Vaibhav-221](https://github.com/Vaibhav-221) | 108 | 9 | 4 | 10 |
-| 10 | [@PremSahith](https://github.com/PremSahith) | 106 | 8 | 4 | 10 |
-| 11 | [@Aayuiiitmg](https://github.com/Aayuiiitmg) | 104 | 12 | 8 | 0 |
-| 12 | [@Siddh2024](https://github.com/Siddh2024) | 103 | 4 | 3 | 13 |
+| 6 | [@Siddh2024](https://github.com/Siddh2024) | 120 | 5 | 4 | 14 |
+| 7 | [@DebasmitaBose0](https://github.com/DebasmitaBose0) | 115 | 0 | 0 | 23 |
+| 8 | [@Dhruvil20060](https://github.com/Dhruvil20060) | 111 | 8 | 6 | 7 |
+| 9 | [@vasheekhan](https://github.com/vasheekhan) | 110 | 5 | 3 | 14 |
+| 10 | [@Vaibhav-221](https://github.com/Vaibhav-221) | 108 | 9 | 4 | 10 |
+| 11 | [@PremSahith](https://github.com/PremSahith) | 106 | 8 | 4 | 10 |
+| 12 | [@Aayuiiitmg](https://github.com/Aayuiiitmg) | 104 | 12 | 8 | 0 |
 | 13 | [@namrarafique93-del](https://github.com/namrarafique93-del) | 97 | 11 | 5 | 5 |
 | 14 | [@pranav-cholleti](https://github.com/pranav-cholleti) | 86 | 18 | 3 | 4 |
 | 15 | [@divyaa404](https://github.com/divyaa404) | 80 | 5 | 4 | 6 |
@@ -161,8 +161,8 @@ Last updated: 2026-07-06
 | 145 | [@Rohan-Desai4407](https://github.com/Rohan-Desai4407) | 10 | 0 | 0 | 2 |
 | 146 | [@Samcode-16](https://github.com/Samcode-16) | 10 | 0 | 0 | 2 |
 | 147 | [@Sargam-Ghagre](https://github.com/Sargam-Ghagre) | 10 | 0 | 0 | 2 |
-| 148 | [@sarthakshruti999-code](https://github.com/sarthakshruti999-code) | 10 | 0 | 0 | 2 |
-| 149 | [@sayam242](https://github.com/sayam242) | 10 | 0 | 0 | 2 |
+| 148 | [@sayam242](https://github.com/sayam242) | 10 | 0 | 0 | 2 |
+| 149 | [@shrutipatidar08](https://github.com/shrutipatidar08) | 10 | 0 | 0 | 2 |
 | 150 | [@Thejaswini-VS](https://github.com/Thejaswini-VS) | 10 | 0 | 0 | 2 |
 | 151 | [@Varshith111](https://github.com/Varshith111) | 10 | 0 | 0 | 2 |
 | 152 | [@vidhiii1711](https://github.com/vidhiii1711) | 10 | 0 | 0 | 2 |
