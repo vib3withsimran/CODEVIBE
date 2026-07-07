@@ -30,6 +30,7 @@ const Courses = () => {
   const { query, setQuery } = useSearch();
   const debouncedQuery = useDebounce(query, 350);
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedDifficulty, setSelectedDifficulty] = useState('All');
   const [wishlist, setWishlist] = useState([]);
   const [animatingId, setAnimatingId] = useState(null);
   const [showWishlistOnly, setShowWishlistOnly] = useState(false);
@@ -151,12 +152,14 @@ if (location.state?.scrollToContact) {
   ];
 
   const categories = ['All', ...new Set(courses.map(course => course.category))];
+  const difficulties = ['All', ...new Set(courses.map(course => course.level))];
 
   const filteredCourses = courses.filter((course) => {
     const matchesSearch = course.title.toLowerCase().includes(debouncedQuery.trim().toLowerCase());
     const matchesCategory = selectedCategory === 'All' || course.category === selectedCategory;
+    const matchesDifficulty = selectedDifficulty === 'All' || course.level === selectedDifficulty;
     const matchesWishlist = !showWishlistOnly || wishlist.includes(course.title);
-    return matchesSearch && matchesCategory && matchesWishlist;
+    return matchesSearch && matchesCategory && matchesDifficulty && matchesWishlist;
   });
 
   const getLevelBadge = (level) => {
@@ -317,23 +320,54 @@ if (location.state?.scrollToContact) {
         )}
       </div>
 
-      {/* Category Filter Buttons */}
+      {/* Filter Section */}
       <div style={{
         display: 'flex',
-        flexWrap: 'wrap',
-        gap: '12px',
+        flexDirection: 'column',
+        gap: '20px',
         marginBottom: '32px',
-        justifyContent: 'center',
       }}>
-        {categories.map((category) => (
-          <button
-            key={category}
-            onClick={() => setSelectedCategory(category)}
-            className={`filter-btn ${selectedCategory === category ? 'active' : ''}`}
-          >
-            {category}
-          </button>
-        ))}
+        {/* Category Filter Buttons */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+          <span style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '0.85rem', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase' }}>Categories</span>
+          <div style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '12px',
+            justifyContent: 'center',
+          }}>
+            {categories.map((category) => (
+              <button
+                key={category}
+                onClick={() => setSelectedCategory(category)}
+                className={`filter-btn ${selectedCategory === category ? 'active' : ''}`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Difficulty Filter Buttons */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+          <span style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '0.85rem', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase' }}>Difficulty</span>
+          <div style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '12px',
+            justifyContent: 'center',
+          }}>
+            {difficulties.map((difficulty) => (
+              <button
+                key={difficulty}
+                onClick={() => setSelectedDifficulty(difficulty)}
+                className={`filter-btn ${selectedDifficulty === difficulty ? 'active' : ''}`}
+              >
+                {difficulty}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       {filteredCourses.length > 0 ? (
@@ -485,9 +519,9 @@ if (location.state?.scrollToContact) {
           title={showWishlistOnly ? "No Wishlisted Courses" : "No Courses Found"}
           description={showWishlistOnly
             ? "You haven't bookmarked any courses yet. Click the bookmark icon on any course to save it!"
-            : "We couldn't find any courses matching your selected category or search query."}
+            : "No courses found for the selected filters."}
           buttonText="Show All Courses"
-          onButtonClick={() => { setSelectedCategory("All"); setQuery(""); setShowWishlistOnly(false); }}
+          onButtonClick={() => { setSelectedCategory("All"); setSelectedDifficulty("All"); setQuery(""); setShowWishlistOnly(false); }}
         />
       )}
       <RoadmapGenerator />
